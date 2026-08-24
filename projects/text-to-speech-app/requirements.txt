@@ -1,0 +1,5 @@
+﻿fastapi>=0.100.0
+uvicorn>=0.22.0
+vieneu>=3.2.9
+lameenc>=1.8.4
+pydantic>=2.0.0

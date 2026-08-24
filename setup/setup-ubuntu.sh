@@ -12,7 +12,25 @@ if [[ "${EUID}" -ne 0 ]]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-APP_DIR="$(cd "$SCRIPT_DIR/../projects/genarate-image" && pwd)"
+APP_DIR="$(realpath -m "$SCRIPT_DIR/../projects/genarate-image")"
+
+if [[ ! -f "$APP_DIR/requirements.txt" ]] || [[ ! -f "$APP_DIR/app.py" ]]; then
+  printf '\n[Lỗi] StoryFrame source chưa đầy đủ tại: %s\n' "$APP_DIR" >&2
+  printf 'Cần có ít nhất app.py và requirements.txt. Hãy đồng bộ toàn bộ control-center/projects trước khi setup.\n' >&2
+  exit 1
+fi
+
+# Docker, WSL cũ và nhiều GPU cloud image không chạy systemd ở PID 1. Trong
+# trường hợp đó phải dùng process supervisor nhẹ của setup-container.sh.
+INIT_PROCESS="$(ps -p 1 -o comm= 2>/dev/null | tr -d '[:space:]' || true)"
+if [[ "$INIT_PROCESS" != "systemd" ]] || [[ ! -d /run/systemd/system ]]; then
+  printf '\n[StoryFrame] Không phát hiện systemd (PID 1: %s). Chuyển sang chế độ container.\n' "${INIT_PROCESS:-unknown}"
+  if [[ "${EUID}" -ne 0 ]]; then
+    exec sudo -E bash "$SCRIPT_DIR/setup-container.sh"
+  fi
+  exec bash "$SCRIPT_DIR/setup-container.sh"
+fi
+
 INSTALL_ROOT="${STORYFRAME_INSTALL_ROOT:-$HOME/storyframe-runtime}"
 COMFY_DIR="$INSTALL_ROOT/ComfyUI"
 STORY_MODEL="${STORY_MODEL:-qwen3.5:27b}"

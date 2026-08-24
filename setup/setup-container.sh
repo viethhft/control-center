@@ -5,7 +5,12 @@ set -Eeuo pipefail
 # Override example: STORY_MODEL=qwen3.5:35b bash control-center/setup/setup-container.sh
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-APP_DIR="$(cd "$SCRIPT_DIR/../projects/genarate-image" && pwd)"
+APP_DIR="$(realpath -m "$SCRIPT_DIR/../projects/genarate-image")"
+if [[ ! -f "$APP_DIR/requirements.txt" ]] || [[ ! -f "$APP_DIR/app.py" ]]; then
+  printf '\n[Lỗi] StoryFrame source chưa đầy đủ tại: %s\n' "$APP_DIR" >&2
+  printf 'Cần có ít nhất app.py và requirements.txt. Hãy đồng bộ toàn bộ control-center/projects trước khi setup.\n' >&2
+  exit 1
+fi
 COMFY_DIR="${COMFY_DIR:-/root/ComfyUI}"
 STORY_MODEL="${STORY_MODEL:-qwen3.5:27b}"
 QWEN_MODEL="qwen_image_distill_full_fp8_e4m3fn.safetensors"

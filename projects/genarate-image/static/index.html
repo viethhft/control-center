@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101513">
+  <title>StoryFrame Studio</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/style.css?v=6">
+  <link rel="stylesheet" href="/static/ui-v4.css?v=6">
+  <link rel="stylesheet" href="/static/wizard.css?v=6">
+  <link rel="stylesheet" href="/static/references.css?v=6">
+  <link rel="stylesheet" href="/static/delete-project.css?v=1">
+  <link rel="stylesheet" href="/static/ui-dialog.css?v=1">
+  <link rel="stylesheet" href="/static/setup-layout.css?v=1">
+</head>
+<body>
+  <aside>
+    <div class="brand"><b>SF</b><span>StoryFrame<small>VISUAL STORY STUDIO</small></span><button id="sidebarToggle" class="sidebar-toggle" type="button" aria-label="Ẩn thanh điều hướng" title="Ẩn thanh điều hướng" aria-expanded="true"><span aria-hidden="true">‹</span></button></div>
+    <p class="side-copy">Biến một bản truyện dài thành bộ khung hình nhất quán, có thể tiếp tục bất cứ lúc nào.</p>
+    <ol aria-label="Các bước thực hiện"><li class="active">Đang chuẩn bị quy trình…</li></ol>
+    <div class="side-note"><span>WORKSPACE</span><p>Dữ liệu project, checkpoint và ảnh được lưu theo từng dự án.</p></div>
+    <div id="engine"><i></i><span>Đang kiểm tra<small>AI ENGINE</small></span></div>
+  </aside>
+
+  <div class="shell">
+    <header class="topbar">
+      <div class="topbar-copy">
+        <span class="eyebrow">AI STORY PRODUCTION</span>
+        <h1>Từ câu chuyện đến <em>từng khung hình.</em></h1>
+        <p>Phân tích cốt truyện, khóa nhận dạng nhân vật và dựng storyboard sẵn sàng để render.</p>
+      </div>
+      <div class="topbar-status"><i></i><span>Xử lý có checkpoint</span></div>
+    </header>
+
+    <main>
+      <section id="setup" class="setup-layout">
+        <article class="panel story-panel">
+          <div class="section-head">
+            <div><span class="step-label">01 · NỘI DUNG</span><h2>Nhập câu chuyện</h2><p>Đưa toàn bộ truyện vào để AI hiểu đúng nhân vật và diễn biến.</p></div>
+            <span id="storyCount" class="counter">0 ký tự</span>
+          </div>
+          <div class="story-input-wrap">
+            <textarea id="story" class="story" placeholder="Dán nội dung truyện tại đây…"></textarea>
+          </div>
+          <div class="input-footer">
+            <label class="file-button"><span>↑</span> Chọn file .txt<input id="storyFile" type="file" accept=".txt,text/plain"></label>
+            <span>UTF-8 · Tối đa 80 cảnh · Tự lưu checkpoint khi phân tích</span>
+          </div>
+        </article>
+
+        <article class="panel settings-panel">
+          <div class="section-head"><div><span class="step-label">02 · CẤU HÌNH</span><h2>Định hình bộ ảnh</h2><p>Thiết lập này sẽ được khóa xuyên suốt toàn bộ project.</p></div></div>
+          <div class="form-stack">
+            <label><span>Tên dự án</span><input id="title" value="Chuyến phiêu lưu" placeholder="Nhập tên dễ nhận biết"></label>
+            <label><span>Phong cách hình ảnh</span><textarea id="style" rows="4">cinematic Asian youth mystery drama, semi-realistic, subtle anime influence, cinematic lighting, shallow depth of field, realistic skin texture</textarea></label>
+            <div class="presets" aria-label="Phong cách nhanh">
+              <button type="button" data-style="cinematic Asian drama, semi-realistic characters, natural skin texture, dramatic cinematic lighting, shallow depth of field, 35mm film composition, rich color grading">🎬 Điện ảnh</button>
+              <button type="button" data-style="Japanese anime feature film, expressive faces, clean character design, richly hand-painted background, dynamic cinematic composition, soft atmospheric lighting">🌸 Anime</button>
+              <button type="button" data-style="photorealistic cinematic film still, realistic anatomy and skin, natural expressions, physically accurate lighting, 35mm lens, subtle film grain, high dynamic range">📷 Chân thực</button>
+              <button type="button" data-style="delicate watercolor storybook illustration, warm harmonious palette, visible paper texture, soft edges, poetic atmosphere, expressive hand-painted characters">🎨 Màu nước</button>
+              <button type="button" data-style="Vietnamese historical period drama, traditional architecture and clothing, elegant silk textures, atmospheric lantern light, epic cinematic framing, culturally accurate details">🏯 Cổ trang Việt</button>
+              <button type="button" data-style="ancient East Asian wuxia fantasy, flowing historical robes, misty mountains, graceful martial arts motion, dramatic rim light, epic wide composition">⚔️ Kiếm hiệp</button>
+              <button type="button" data-style="dark gothic horror, unsettling realistic atmosphere, deep shadows, desaturated palette, volumetric fog, restrained supernatural details, suspenseful cinematic framing">🕯️ Kinh dị</button>
+              <button type="button" data-style="noir detective thriller, rain-soaked streets, high contrast chiaroscuro, moody teal and amber palette, mysterious silhouettes, cinematic 50mm photography">🔍 Trinh thám</button>
+              <button type="button" data-style="epic high fantasy illustration, vast magical world, intricate costumes and architecture, luminous spell effects, dramatic clouds, heroic cinematic scale">🐉 Fantasy</button>
+              <button type="button" data-style="cyberpunk science fiction, neon megacity, holographic interfaces, wet reflective streets, detailed futuristic fashion, bold magenta cyan lighting, cinematic realism">🌃 Cyberpunk</button>
+              <button type="button" data-style="stylized 3D animated feature film, appealing character proportions, expressive faces, polished materials, soft global illumination, colorful cinematic environment">🧸 Hoạt hình 3D</button>
+              <button type="button" data-style="European bande dessinée comic art, confident ink linework, carefully painted colors, detailed environments, clear visual storytelling, dynamic panel-like composition">💥 Truyện tranh</button>
+              <button type="button" data-style="Korean webtoon illustration, elegant clean line art, attractive expressive characters, soft gradient coloring, fashionable modern setting, vertical comic aesthetic">📱 Webtoon</button>
+              <button type="button" data-style="cozy children's picture book, friendly rounded characters, bright gentle colors, simple readable shapes, playful details, warm safe atmosphere, textured illustration">🌈 Thiếu nhi</button>
+              <button type="button" data-style="dreamlike surrealism, symbolic landscapes, impossible architecture, poetic visual metaphors, ethereal light, sophisticated color harmony, fine-art composition">🌙 Siêu thực</button>
+              <button type="button" data-style="historical documentary reenactment, authentic period clothing and props, natural available light, restrained color grade, observational composition, realistic environmental detail">📜 Tài liệu lịch sử</button>
+            </div>
+            <div class="two">
+              <label><span>Số khung hình</span><input id="count" type="number" min="1" max="80" value="12"></label>
+              <label><span>Tỷ lệ khung</span><select id="ratio"><option>16:9</option><option>9:16</option><option>1:1</option><option>4:3</option></select></label>
+            </div>
+          </div>
+          <div class="estimate"><span>Đầu ra dự kiến</span><b><i id="estimateCount">12</i> cảnh + hồ sơ nhân vật</b></div>
+          <button id="analyze" class="primary-action"><span>Phân tích & dựng storyboard</span><b>→</b></button>
+          <p id="error" role="alert"></p>
+        </article>
+      </section>
+
+      <section id="progress" class="panel progress hidden">
+        <div class="progress-head">
+          <div class="loader"><span></span></div>
+          <div class="progress-copy"><small>TIẾN TRÌNH ĐANG CHẠY</small><h2 id="progressTitle">Đang chuẩn bị…</h2><p id="progressMessage">Đang khởi tạo dữ liệu dự án.</p></div>
+          <strong id="percent">0%</strong>
+        </div>
+        <div class="bar"><i id="bar"></i></div>
+        <div class="metrics">
+          <div><small>Giai đoạn hiện tại</small><b id="stage">Khởi tạo</b></div>
+          <div><small>Dữ liệu đã nhận</small><b id="chars">0 ký tự</b></div>
+          <div><small>Thời gian xử lý</small><b id="elapsed">0 giây</b></div>
+        </div>
+        <div class="progress-tip"><b>Bạn có thể rời trang an toàn.</b><span>Tiến trình tiếp tục trên server và có thể mở lại từ “Tiến trình đã lưu”.</span></div>
+        <div class="progress-actions" style="display:flex;justify-content:flex-end;margin-top:12px"><button id="cancelAnalysis" type="button" style="padding:9px 13px;border:1px solid #e3b8b4;border-radius:9px;background:#fff5f4;color:#c94b42;font-weight:800">Dừng phân tích</button></div>
+        <div id="diagnostic" class="diagnostic hidden">
+          <div class="diagnostic-title"><span>!</span><div><h3>Không thể hoàn tất phân tích</h3><p id="diagMessage"></p></div></div>
+          <dl>
+            <div><dt>Mã sự cố</dt><dd id="incident">—</dd></div>
+            <div><dt>Loại lỗi</dt><dd id="errorType">—</dd></div>
+            <div><dt>Giai đoạn</dt><dd id="failedStage">—</dd></div>
+            <div class="wide"><dt>Chi tiết kỹ thuật</dt><dd><code id="technical">—</code></dd></div>
+            <div class="wide"><dt>Đề xuất</dt><dd id="suggestion">—</dd></div>
+          </dl>
+          <div class="diagnostic-actions"><button id="back">← Chỉnh dữ liệu</button><button id="retry">Tiếp tục từ checkpoint →</button></div>
+        </div>
+      </section>
+
+      <section id="workspace" class="hidden">
+        <div class="project-head">
+          <div><small>PROJECT ĐANG MỞ</small><h2 id="projectTitle"></h2><p id="summary"></p></div>
+          <button id="restart" class="secondary-action">＋ Dự án mới</button>
+        </div>
+        <nav class="workspace-tabs" aria-label="Nội dung dự án">
+          <button class="active" data-tab="characters"><span>Nhân vật</span><small>Khóa nhận dạng</small></button>
+          <button data-tab="scenes"><span>Storyboard</span><small>Duyệt và render</small></button>
+          <button data-tab="json"><span>Dữ liệu</span><small>Chỉnh JSON</small></button>
+        </nav>
+        <div id="characters" class="tab active"></div>
+        <div id="scenes" class="tab"></div>
+        <div id="json" class="tab json-panel"><div class="json-head"><div><h3>Dữ liệu project</h3><p>Dành cho thao tác nâng cao. JSON sai cấu trúc có thể ảnh hưởng luồng render.</p></div><button id="save">Lưu thay đổi</button></div><textarea id="jsonEditor" rows="25" spellcheck="false"></textarea></div>
+      </section>
+    </main>
+  </div>
+  <div id="toast" role="status"></div>
+  <script src="/static/ui-dialog.js?v=1"></script>
+  <script src="/static/app.js?v=10"></script>
+  <script src="/static/ui-enhance.js?v=1"></script>
+</body>
+</html>

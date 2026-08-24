@@ -1,0 +1,20 @@
+/* Equal-height setup columns with intentional internal scrolling. */
+@media(min-width:1101px){
+  .setup-layout{--setup-height:clamp(680px,calc(100vh - 178px),790px);align-items:stretch}
+  .setup-layout>.story-panel,.setup-layout>.settings-panel{height:var(--setup-height);min-height:0}
+  .story-panel{display:flex;flex-direction:column;overflow:hidden}
+  .story-panel .story-input-wrap{display:flex;min-height:0;flex:1}
+  .story-panel .story{height:auto;min-height:0;flex:1;overflow-y:auto;scrollbar-gutter:stable}
+  .story-panel .input-footer{flex:0 0 auto}
+  .settings-panel{display:flex;flex-direction:column;overflow:hidden}
+  .settings-panel>.section-head{flex:0 0 auto}
+  .settings-panel>.form-stack{min-height:0;flex:1;margin-right:-8px;padding-right:8px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+  .settings-panel>.estimate,.settings-panel>#analyze,.settings-panel>#error{flex:0 0 auto}
+}
+.story-panel .story,.settings-panel>.form-stack{scrollbar-width:thin;scrollbar-color:#b8c28c transparent}
+.story-panel .story::-webkit-scrollbar,.settings-panel>.form-stack::-webkit-scrollbar{width:7px}
+.story-panel .story::-webkit-scrollbar-track,.settings-panel>.form-stack::-webkit-scrollbar-track{background:transparent}
+.story-panel .story::-webkit-scrollbar-thumb,.settings-panel>.form-stack::-webkit-scrollbar-thumb{border:2px solid transparent;border-radius:99px;background:#b8c28c;background-clip:padding-box}
+.story-panel .story::-webkit-scrollbar-thumb:hover,.settings-panel>.form-stack::-webkit-scrollbar-thumb:hover{background:#8fa047;background-clip:padding-box}
+@media(max-width:1100px){.setup-layout>.story-panel,.setup-layout>.settings-panel{height:auto}.settings-panel>.form-stack{overflow:visible}.story-panel .story{height:400px;overflow-y:auto}}
+@media(max-width:760px){.story-panel .story{height:360px}}

@@ -36,20 +36,22 @@ function paintJobs(){
   const character=window.currentStoryProject?.()?.characters?.[index];if(!character)return;
   const busy=active.find(job=>job.character_id===character.id||(job.resource_keys||[]).includes(`character:${character.id}`)||(job.resource_keys||[]).includes('project:*'));
   card.classList.toggle('is-rendering',!!busy);card.querySelectorAll('button,input,label').forEach(control=>{if('disabled'in control)control.disabled=!!busy});
-  const status=card.querySelector('.reference-status');if(status&&busy)status.textContent=`Đang được ${jobLabel(busy)} xử lý · ${busy.progress||0}%`;
+  const status=card.querySelector('.reference-status'),statusText=busy?`Đang được ${jobLabel(busy)} xử lý · ${busy.progress||0}%`:'';if(status&&busy&&status.textContent!==statusText)status.textContent=statusText;
  });
  document.querySelectorAll('#scenes .scene').forEach((card,index)=>{
   const scene=window.currentStoryProject?.()?.scenes?.[index];if(!scene)return;
   let versions=card.querySelector('.render-versions');if(!versions){versions=document.createElement('div');versions.className='render-versions';card.querySelector('.render-actions')?.after(versions)}
-  versions.innerHTML=`<span class="${scene.draft_image_url?'ready':''}">Nháp ${scene.draft_image_url?'đã có':'chưa có'}</span><span class="${scene.final_image_url?'ready':''}">Bản cuối ${scene.final_image_url?'đã có':'chưa có'}</span>`;
+  const legacy=scene.image_url&&!scene.draft_image_url&&!scene.final_image_url;
+  const versionHtml=`<span class="${scene.draft_image_url?'ready':''}">Nháp ${scene.draft_image_url?'đã có':'chưa có'}</span><span class="${scene.final_image_url?'ready':''}">Bản cuối ${scene.final_image_url?'đã có':'chưa có'}</span>${legacy?'<span class="ready">Ảnh phiên bản cũ</span>':''}`;
+  if(versions.innerHTML!==versionHtml)versions.innerHTML=versionHtml;
   const job=active.find(item=>item.scene_id===scene.id||(item.kind==='bulk'));
   card.classList.toggle('is-rendering',!!job);let note=card.querySelector('.render-state');
-  if(job){if(!note){note=document.createElement('small');note.className='render-state';card.appendChild(note)}note.textContent=`${jobLabel(job)} · ${job.progress||0}% · ${job.message||'đang xử lý'}`}
+  if(job){if(!note){note=document.createElement('small');note.className='render-state';card.appendChild(note)}const text=`${jobLabel(job)} · ${job.progress||0}% · ${job.message||'đang xử lý'}`;if(note.textContent!==text)note.textContent=text}
   else note?.remove();
   card.querySelectorAll('.render-actions button').forEach(button=>button.disabled=!!job);
  });
  const panel=document.querySelector('.render-manager'),note=panel?.querySelector('.render-job-note');
- if(note)note.textContent=active.length?active.map(job=>`${jobLabel(job)} ${job.progress||0}%`).join(' · '):'Không có render đang chạy';
+ if(note){const text=active.length?active.map(job=>`${jobLabel(job)} ${job.progress||0}%`).join(' · '):'Không có render đang chạy';if(note.textContent!==text)note.textContent=text}
  panel?.querySelectorAll('button').forEach(button=>button.disabled=active.some(job=>job.kind==='bulk'));
 }
 
@@ -128,5 +130,6 @@ window.generateReferences=async function(characterId,button){
  }catch(error){button.disabled=false;button.textContent='Thử tạo lại';await uiAlert(`${error.message}. Job đã tạo vẫn được lưu trên server.`,'Tạo ảnh nhân vật gặp lỗi')}
 };
 
-new MutationObserver(installManager).observe(document.querySelector('#workspace'),{subtree:true,childList:true});
+let installScheduled=false;
+new MutationObserver(()=>{if(installScheduled)return;installScheduled=true;requestAnimationFrame(()=>{installScheduled=false;installManager()})}).observe(document.querySelector('#workspace'),{subtree:true,childList:true});
 installManager();

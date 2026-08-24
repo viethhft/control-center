@@ -151,6 +151,21 @@ def write_json_atomic(path: Path, value: Any) -> None:
     temporary.replace(path)
 
 
+def normalize_render_fields(project: dict) -> bool:
+    """Keep projects created before draft/final outputs were separated compatible."""
+    changed = False
+    for scene in project.get("scenes", []):
+        legacy_url = scene.get("image_url")
+        if legacy_url and not scene.get("draft_image_url") and not scene.get("final_image_url"):
+            scene["final_image_url"] = legacy_url
+            legacy_meta = dict(scene.get("render_meta") or {})
+            legacy_meta.setdefault("quality", "final")
+            legacy_meta.setdefault("legacy", True)
+            scene.setdefault("renders", {})["final"] = legacy_meta
+            changed = True
+    return changed
+
+
 def persist_analysis_job(jid: str) -> None:
     write_json_atomic(analysis_file(jid), JOBS[jid])
 
@@ -1350,7 +1365,11 @@ async def get_project(pid: str):
     path = safe(pid) / "project.json"
     if not path.exists():
         raise HTTPException(404, "Không tìm thấy dự án")
-    return json.loads(path.read_text(encoding="utf-8"))
+    async with project_lock(pid):
+        project = json.loads(path.read_text(encoding="utf-8"))
+        if normalize_render_fields(project):
+            write_json_atomic(path, project)
+    return project
 
 
 def suppress_visible_text(value: Any) -> str:
@@ -2113,6 +2132,7 @@ async def scene_render_job(jid: str, req: GenerateRequest) -> None:
         folder = safe(req.project_id)
         path = folder / "project.json"
         project = json.loads(path.read_text(encoding="utf-8"))
+        normalize_render_fields(project)
         scene = next((x for x in project["scenes"] if x["id"] == req.scene_id), None)
         if not scene:
             raise ValueError(f"Không tìm thấy cảnh {req.scene_id}")
@@ -2148,6 +2168,7 @@ async def render_all_job(jid: str, req: RenderAllRequest):
         folder = safe(req.project_id)
         path = folder / "project.json"
         project = json.loads(path.read_text(encoding="utf-8"))
+        normalize_render_fields(project)
         quality_field = f"{req.quality}_image_url"
         scenes = [
             s for s in project["scenes"]

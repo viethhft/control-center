@@ -196,19 +196,65 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 $SUDO install -m 0644 /tmp/control-center.service /etc/systemd/system/control-center.service
+
+install_project_service(){
+  local name="$1" description="$2" directory="$3" port="$4"
+  cat > "/tmp/$name.service" <<EOF
+[Unit]
+Description=$description
+After=network-online.target ollama.service
+
+[Service]
+Type=simple
+User=$CURRENT_USER
+WorkingDirectory=$directory
+ExecStart=$directory/.venv-linux/bin/python -m uvicorn app:app --host 127.0.0.1 --port $port
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+  $SUDO install -m 0644 "/tmp/$name.service" "/etc/systemd/system/$name.service"
+  rm -f "/tmp/$name.service"
+}
+
+install_project_service "text-to-speech" "Text-to-Speech Studio" "$CONTROL_DIR/projects/text-to-speech-app" 8000
+install_project_service "story-research" "Story Research Lab" "$CONTROL_DIR/projects/story-research-lab" 8020
+install_project_service "emotion-markup" "Emotion Markup Studio" "$CONTROL_DIR/projects/emotion-markup-studio" 8030
+install_project_service "remote-device-hub" "Remote Device Hub" "$CONTROL_DIR/projects/remote-device-hub" 8040
+
 rm -f /tmp/storyframe-comfyui.service /tmp/storyframe.service /tmp/control-center.service
 $SUDO systemctl daemon-reload
-$SUDO systemctl enable --now storyframe-comfyui storyframe control-center
+$SUDO systemctl enable --now storyframe-comfyui storyframe control-center \
+  text-to-speech story-research emotion-markup remote-device-hub
 
 log "Chờ service sẵn sàng"
-for _ in {1..60}; do
-  if curl -fsS "http://127.0.0.1:$APP_PORT/api/health" >/tmp/storyframe-health.json 2>/dev/null; then break; fi
+declare -A SERVICE_HEALTH=(
+  [control-center]="http://127.0.0.1:7999/"
+  [text-to-speech]="http://127.0.0.1:8000/"
+  [storyframe]="http://127.0.0.1:$APP_PORT/api/health"
+  [story-research]="http://127.0.0.1:8020/api/health"
+  [emotion-markup]="http://127.0.0.1:8030/api/health"
+  [remote-device-hub]="http://127.0.0.1:8040/api/health"
+  [storyframe-comfyui]="http://127.0.0.1:$COMFY_PORT/system_stats"
+)
+for _ in {1..120}; do
+  remaining=0
+  for name in "${!SERVICE_HEALTH[@]}"; do
+    curl -fsS --max-time 3 "${SERVICE_HEALTH[$name]}" >/dev/null 2>&1 || remaining=$((remaining + 1))
+  done
+  [[ "$remaining" -eq 0 ]] && break
   sleep 2
 done
-if ! curl -fsS "http://127.0.0.1:$APP_PORT/api/health"; then
-  $SUDO systemctl --no-pager --full status storyframe storyframe-comfyui || true
-  fail "Service chưa sẵn sàng. Xem log: journalctl -u storyframe -u storyframe-comfyui -f"
-fi
+for name in "${!SERVICE_HEALTH[@]}"; do
+  if curl -fsS --max-time 5 "${SERVICE_HEALTH[$name]}" >/dev/null 2>&1; then
+    printf '[OK]   %s\n' "$name"
+  else
+    $SUDO systemctl --no-pager --full status "$name" || true
+    fail "$name chưa sẵn sàng. Xem log: journalctl -u $name -f"
+  fi
+done
 
 IP_ADDRESS="$(hostname -I | awk '{print $1}')"
 printf '\n\033[1;32mCÀI ĐẶT HOÀN TẤT\033[0m\n'

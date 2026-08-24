@@ -1,39 +1,53 @@
-# Control Center Environment Setup
+# Thiết lập toàn bộ Control Center
 
-Các script dựng môi trường dùng chung được quản lý tập trung tại đây. Script tự xác định
-StoryFrame ở `../projects/genarate-image`; toàn bộ ứng dụng con được quản lý trong
-`control-center/projects`.
+Thư mục này quản lý môi trường và vòng đời của toàn hệ thống, không thuộc riêng
+StoryFrame.
 
-## Windows workstation
+## Container Ubuntu/GPU cloud
 
-```bat
-control-center\setup\run-workstation.bat
+```bash
+bash setup/setup-container.sh
 ```
 
-Kiểm tra các dịch vụ:
+Script sẽ cài Control Center, môi trường Python của cả 5 project, Ollama, ComfyUI,
+model render và khởi động toàn bộ dịch vụ.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File control-center\setup\check-workstation.ps1
+Sau lần cài đầu tiên:
+
+```bash
+bash setup/start-container.sh
+bash setup/stop-container.sh
 ```
 
 ## Ubuntu có systemd
 
 ```bash
-bash control-center/setup/setup-ubuntu.sh
+bash setup/setup-ubuntu.sh
 ```
 
-## GPU container
+Các service được tạo:
+
+- `control-center` — cổng 7999
+- `text-to-speech` — cổng 8000
+- `storyframe` — cổng 8010
+- `story-research` — cổng 8020
+- `emotion-markup` — cổng 8030
+- `remote-device-hub` — cổng 8040
+- `storyframe-comfyui` — cổng nội bộ 8188
+- `ollama` — cổng nội bộ 11434
+
+## Chỉ cài lại dependency project
 
 ```bash
-bash control-center/setup/setup-container.sh
+bash setup/install-project-envs.sh
 ```
 
-Tải/cập nhật riêng model render và khởi động lại:
+## Log container
 
 ```bash
-bash control-center/setup/install-render-models.sh
-bash control-center/setup/start-container.sh
+tail -F logs/*.log
 ```
 
-`requirements.txt` và launcher hằng ngày vẫn nằm trong từng project vì Control Center
-dùng chúng làm dependency/entry point riêng cho mỗi ứng dụng.
+PID của project được đặt tại `runtime/pids`, đúng với process manager của Control
+Center. Mỗi project giữ `requirements.txt` riêng và được cài vào virtualenv Linux
+riêng; StoryFrame dùng `.venv-app` để tách dependency CUDA/render.

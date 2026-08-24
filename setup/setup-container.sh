@@ -98,4 +98,4 @@ bash "$SCRIPT_DIR/start-container.sh"
 printf '\n\033[1;32mSETUP HOÀN TẤT\033[0m\n'
 printf 'Control Center: http://127.0.0.1:7999\n'
 printf 'StoryFrame:    http://127.0.0.1:8010/api/health\n'
-printf 'Logs:   tail -F %s/runtime/logs/storyframe.log %s/runtime/logs/comfyui.log\n' "$APP_DIR" "$APP_DIR"
+printf 'Logs:   tail -F %s/logs/*.log\n' "$(cd "$SCRIPT_DIR/.." && pwd)"

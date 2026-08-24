@@ -211,15 +211,60 @@ def port_is_open(project_id: str) -> bool:
 def listener_pid(project_id: str) -> int | None:
     """Recover the owner when the manager restarted and lost its in-memory Popen."""
     _, port = project_endpoint(project_id)
-    if os.name != "nt":
+    if os.name == "nt":
+        result = subprocess.run(
+            ["netstat", "-ano", "-p", "tcp"], capture_output=True, text=True,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        )
+        pattern = re.compile(
+            rf"^\s*TCP\s+\S*:{port}\s+\S+\s+LISTENING\s+(\d+)\s*$",
+            re.MULTILINE,
+        )
+        match = pattern.search(result.stdout)
+        return int(match.group(1)) if match else None
+    try:
+        result = subprocess.run(
+            ["ss", "-ltnpH", f"sport = :{port}"],
+            capture_output=True,
+            text=True,
+            timeout=2,
+        )
+    except (OSError, subprocess.SubprocessError):
         return None
-    result = subprocess.run(
-        ["netstat", "-ano", "-p", "tcp"], capture_output=True, text=True,
-        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
-    )
-    pattern = re.compile(rf"^\s*TCP\s+\S*:{port}\s+\S+\s+LISTENING\s+(\d+)\s*$", re.MULTILINE)
+    pattern = re.compile(r"\bpid=(\d+)\b")
     match = pattern.search(result.stdout)
     return int(match.group(1)) if match else None
+
+
+def project_process_matches(project_id: str, pid: int) -> bool:
+    """Do not trust stale PID files or adopt an unrelated listener."""
+    if not process_exists(pid):
+        return False
+    if os.name == "nt":
+        owner = listener_pid(project_id)
+        return owner == pid
+    try:
+        expected = (ROOT / project(project_id)["directory"]).resolve()
+        actual = Path(f"/proc/{pid}/cwd").resolve()
+        command = Path(f"/proc/{pid}/cmdline").read_bytes().replace(b"\0", b" ")
+        return actual == expected and b"uvicorn" in command and b"app:app" in command
+    except (OSError, ValueError):
+        return False
+
+
+def saved_project_pid(project_id: str) -> int | None:
+    pid_path = PID_DIR / f"{project_id}.pid"
+    if not pid_path.exists():
+        return None
+    try:
+        pid = int(pid_path.read_text(encoding="ascii").strip())
+    except (OSError, ValueError):
+        pid_path.unlink(missing_ok=True)
+        return None
+    if project_process_matches(project_id, pid):
+        return pid
+    pid_path.unlink(missing_ok=True)
+    return None
 
 
 def process_status(project_id: str) -> str:
@@ -229,15 +274,8 @@ def process_status(project_id: str) -> str:
             return "running"
         if proc:
             PROCESSES.pop(project_id, None)
-        pid_path = PID_DIR / f"{project_id}.pid"
-        if pid_path.exists():
-            try:
-                pid = int(pid_path.read_text(encoding="ascii").strip())
-                if process_exists(pid):
-                    return "running"
-                pid_path.unlink(missing_ok=True)
-            except ValueError:
-                pid_path.unlink(missing_ok=True)
+        if saved_project_pid(project_id) is not None:
+            return "running"
     return "running" if port_is_open(project_id) else "stopped"
 
 
@@ -312,8 +350,14 @@ def list_projects(user=Depends(current_user)):
     result = []
     for item in projects():
         features = [f for f in item.get("features", []) if permitted(user, item["id"], f["id"])]
-        if user["role"] == "admin" or features or permitted(user, item["id"]):
-            result.append({**item, "features": features, "status": process_status(item["id"])})
+        can_control = permitted(user, item["id"])
+        if user["role"] == "admin" or features or can_control:
+            result.append({
+                **item,
+                "features": features,
+                "status": process_status(item["id"]),
+                "can_control": can_control,
+            })
     return result
 
 
@@ -324,7 +368,7 @@ def start_project(project_id: str, request: Request, user=Depends(current_user))
         raise HTTPException(403, "Bạn không có quyền chạy dự án")
     if port_is_open(project_id):
         recovered_pid = listener_pid(project_id)
-        if recovered_pid:
+        if recovered_pid and project_process_matches(project_id, recovered_pid):
             (PID_DIR / f"{project_id}.pid").write_text(str(recovered_pid), encoding="ascii")
         return {"status": "running", "pid": recovered_pid, "recovered": True}
     with PROCESS_LOCK:
@@ -359,25 +403,47 @@ def stop_project(project_id: str, request: Request, user=Depends(current_user)):
         proc = PROCESSES.get(project_id)
         pid_path = PID_DIR / f"{project_id}.pid"
         pid = proc.pid if proc and proc.poll() is None else None
-        if pid is None and pid_path.exists():
-            try:
-                candidate = int(pid_path.read_text(encoding="ascii").strip())
-                if process_exists(candidate):
-                    pid = candidate
-                else:
-                    pid_path.unlink(missing_ok=True)
-            except ValueError:
-                pid_path.unlink(missing_ok=True)
         if pid is None:
-            pid = listener_pid(project_id)
+            pid = saved_project_pid(project_id)
         if pid is None:
+            candidate = listener_pid(project_id)
+            if candidate and project_process_matches(project_id, candidate):
+                pid = candidate
+        if pid is None:
+            if port_is_open(project_id):
+                raise HTTPException(
+                    409,
+                    "Cổng dự án đang do một process không thuộc Control Center quản lý",
+                )
             return {"status": "stopped"}
         if os.name == "nt":
             subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True)
         else:
-            os.killpg(os.getpgid(pid), signal.SIGTERM)
+            # Only manager-created children are guaranteed to own a process group.
+            try:
+                if proc and proc.poll() is None:
+                    os.killpg(os.getpgid(pid), signal.SIGTERM)
+                else:
+                    os.kill(pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
         PROCESSES.pop(project_id, None)
         pid_path.unlink(missing_ok=True)
+    deadline = time.monotonic() + 8
+    while port_is_open(project_id) and time.monotonic() < deadline:
+        time.sleep(0.15)
+    if port_is_open(project_id):
+        if process_exists(pid):
+            if os.name == "nt":
+                subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True)
+            else:
+                try:
+                    os.kill(pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+        time.sleep(0.3)
+    if port_is_open(project_id):
+        raise HTTPException(409, "Đã gửi lệnh dừng nhưng cổng dự án vẫn đang hoạt động")
     audit(request, user, "stop", project_id)
     return {"status": "stopped"}
 

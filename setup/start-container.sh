@@ -38,7 +38,9 @@ start_app(){
   log "Khởi động $id tại cổng $port"
   (
     cd "$directory"
-    nohup "$python" -m uvicorn app:app --host 127.0.0.1 --port "$port" \
+    # Each project owns a session/process group so Control Center can stop it
+    # without terminating sibling applications or itself.
+    nohup setsid "$python" -m uvicorn app:app --host 127.0.0.1 --port "$port" \
       >"$LOG_DIR/$id.log" 2>&1 &
     echo $! > "$PID_DIR/$id.pid"
   )
@@ -73,7 +75,7 @@ start_app "remote-device-hub" "$PROJECTS_DIR/remote-device-hub" ".venv-linux/bin
 log "Khởi động Control Center tại cổng 7999"
 (
   cd "$CONTROL_DIR"
-  nohup .venv-linux/bin/python -m uvicorn app:app --host 127.0.0.1 --port 7999 \
+  nohup setsid .venv-linux/bin/python -m uvicorn app:app --host 127.0.0.1 --port 7999 \
     >"$LOG_DIR/control-center.log" 2>&1 &
   echo $! > "$CONTROL_DIR/runtime/control-center.pid"
 )

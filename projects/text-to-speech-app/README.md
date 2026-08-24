@@ -33,7 +33,7 @@ Mở http://127.0.0.1:8000.
 Chế độ **Nhanh** chạy hoàn toàn trên máy và không cần cấu hình. Để dùng chế độ
 **AI phân vai & biểu cảm**, cài Ollama trên Windows rồi tải model Qwen 2.5 3B:
 
-    ollama pull qwen2.5:3b
+    ollama pull qwen3.5:27b
     .\run.bat
 
 Mặc định ứng dụng kết nối `http://127.0.0.1:11434` và không gửi truyện ra ngoài

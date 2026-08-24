@@ -92,6 +92,16 @@ EOF
 log "Cài môi trường cho Control Center và toàn bộ project con"
 bash "$SCRIPT_DIR/install-project-envs.sh"
 
+CONTROL_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+cat > "$CONTROL_DIR/.env.system" <<EOF
+OLLAMA_URL=http://127.0.0.1:11434
+OLLAMA_HOST=http://127.0.0.1:11434
+OLLAMA_STORY_MODEL=$STORY_MODEL
+STORY_LAB_MODEL=$STORY_MODEL
+EMOTION_MODEL=$STORY_MODEL
+OLLAMA_ROLE_MODEL=$STORY_MODEL
+EOF
+
 log "Khởi động Control Center, ComfyUI và StoryFrame"
 bash "$SCRIPT_DIR/start-container.sh"
 

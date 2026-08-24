@@ -140,6 +140,15 @@ EOF
 log "Cài môi trường cho Control Center và toàn bộ project con"
 bash "$SCRIPT_DIR/install-project-envs.sh"
 
+cat > "$CONTROL_DIR/.env.system" <<EOF
+OLLAMA_URL=http://127.0.0.1:11434
+OLLAMA_HOST=http://127.0.0.1:11434
+OLLAMA_STORY_MODEL=$STORY_MODEL
+STORY_LAB_MODEL=$STORY_MODEL
+EMOTION_MODEL=$STORY_MODEL
+OLLAMA_ROLE_MODEL=$STORY_MODEL
+EOF
+
 log "Tạo systemd service"
 CURRENT_USER="$(id -un)"
 cat > /tmp/storyframe-comfyui.service <<EOF
@@ -170,6 +179,7 @@ Requires=storyframe-comfyui.service
 Type=simple
 User=$CURRENT_USER
 WorkingDirectory=$APP_DIR
+EnvironmentFile=-$CONTROL_DIR/.env.system
 ExecStart=$APP_DIR/.venv-app/bin/python -m uvicorn app:app --host 127.0.0.1 --port $APP_PORT
 Restart=on-failure
 RestartSec=5
@@ -188,6 +198,7 @@ After=network-online.target
 Type=simple
 User=$CURRENT_USER
 WorkingDirectory=$CONTROL_DIR
+EnvironmentFile=-$CONTROL_DIR/.env.system
 ExecStart=$CONTROL_DIR/.venv-linux/bin/python -m uvicorn app:app --host 127.0.0.1 --port 7999
 Restart=on-failure
 RestartSec=5
@@ -208,6 +219,7 @@ After=network-online.target ollama.service
 Type=simple
 User=$CURRENT_USER
 WorkingDirectory=$directory
+EnvironmentFile=-$CONTROL_DIR/.env.system
 ExecStart=$directory/.venv-linux/bin/python -m uvicorn app:app --host 127.0.0.1 --port $port
 Restart=on-failure
 RestartSec=5

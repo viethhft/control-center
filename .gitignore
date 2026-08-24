@@ -1,0 +1,7 @@
+.env.system
+.venv-linux/
+logs/
+runtime/
+__pycache__/
+*.py[cod]
+

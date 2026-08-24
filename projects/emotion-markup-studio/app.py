@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "projects"
 DATA.mkdir(exist_ok=True)
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434").rstrip("/")
-MODEL = os.getenv("EMOTION_MODEL", "qwen2.5:3b")
+MODEL = os.getenv("EMOTION_MODEL", "qwen3.5:27b")
 ALLOWED_CUES = {
     "normal", "laughs", "chuckles", "sighs", "whispers", "excited",
     "surprised", "angry", "sad", "fearful", "tender", "tense",

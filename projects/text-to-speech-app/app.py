@@ -1209,7 +1209,7 @@ async def parse_dialogue(req: ParseRequest):
 
 def _local_ai_assign_roles(batch: List[Dict[str, Any]], cast_context: str) -> List[Dict[str, Any]]:
     """Ask local Ollama to resolve speakers and direct each line's performance."""
-    model = os.getenv("OLLAMA_ROLE_MODEL", "qwen2.5:3b").strip()
+    model = os.getenv("OLLAMA_ROLE_MODEL", "qwen3.5:27b").strip()
     ollama_host = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434").rstrip("/")
     compact = [{"id": s["id"], "text": s["text"], "suggested_speaker": s["speaker"],
                 "suggested_role": s["role"]} for s in batch]

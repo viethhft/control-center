@@ -18,7 +18,7 @@ cd generate_image_for_story
 bash control-center/setup/setup-container.sh
 ```
 
-Model phân tích local để test là `qwen2.5:3b`. Có thể đổi qua biến `OLLAMA_STORY_MODEL` trong `.env` hoặc `run.bat`.
+Model phân tích mặc định là `qwen3.5:27b`. Có thể đổi đồng bộ qua biến `STORY_MODEL` khi chạy script setup.
 
 Nâng cấp container cũ sang Qwen-Image:
 

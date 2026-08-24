@@ -9,6 +9,12 @@ LOG_DIR="$CONTROL_DIR/logs"
 PID_DIR="$CONTROL_DIR/runtime/pids"
 mkdir -p "$LOG_DIR" "$PID_DIR" "$CONTROL_DIR/runtime"
 
+if [[ -f "$CONTROL_DIR/.env.system" ]]; then
+  set -a
+  source "$CONTROL_DIR/.env.system"
+  set +a
+fi
+
 log(){ printf '\n\033[1;36m[Control Center]\033[0m %s\n' "$*"; }
 fail(){ printf '\n\033[1;31m[Lỗi]\033[0m %s\n' "$*" >&2; exit 1; }
 

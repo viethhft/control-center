@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 # StoryFrame one-command installer for Ubuntu 22.04/24.04 + NVIDIA GPU.
 # Optional overrides:
-#   STORY_MODEL=qwen3.5:27b APP_PORT=8000 bash control-center/setup/setup-ubuntu.sh
+#   STORY_MODEL=qwen3.5:27b APP_PORT=8010 bash control-center/setup/setup-ubuntu.sh
 
 SUDO=""
 if [[ "${EUID}" -ne 0 ]]; then
@@ -12,6 +12,7 @@ if [[ "${EUID}" -ne 0 ]]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONTROL_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 APP_DIR="$(realpath -m "$SCRIPT_DIR/../projects/genarate-image")"
 
 if [[ ! -f "$APP_DIR/requirements.txt" ]] || [[ ! -f "$APP_DIR/app.py" ]]; then
@@ -34,7 +35,7 @@ fi
 INSTALL_ROOT="${STORYFRAME_INSTALL_ROOT:-$HOME/storyframe-runtime}"
 COMFY_DIR="$INSTALL_ROOT/ComfyUI"
 STORY_MODEL="${STORY_MODEL:-qwen3.5:27b}"
-APP_PORT="${APP_PORT:-8000}"
+APP_PORT="${APP_PORT:-8010}"
 COMFY_PORT="${COMFY_PORT:-8188}"
 QWEN_MODEL="qwen_image_distill_full_fp8_e4m3fn.safetensors"
 QWEN_EDIT_MODEL="qwen_image_edit_2509_fp8_e4m3fn.safetensors"
@@ -56,7 +57,7 @@ AVAILABLE_GB="$(df -Pk "$APP_DIR" | awk 'NR==2 {print int($4/1024/1024)}')"
 
 log "Cài gói hệ thống"
 $SUDO apt-get update
-$SUDO env DEBIAN_FRONTEND=noninteractive apt-get install -y git git-lfs curl wget ffmpeg libgl1 libglib2.0-0 python3 python3-venv python3-pip python3-dev build-essential gcc g++
+$SUDO env DEBIAN_FRONTEND=noninteractive apt-get install -y git git-lfs curl wget ffmpeg libgl1 libglib2.0-0 python3 python3-venv python3-pip python3-dev build-essential gcc g++ adb libgl1-mesa-dev libx11-dev libxtst-dev
 
 log "Cài và khởi động Ollama"
 if ! command -v ollama >/dev/null; then
@@ -118,9 +119,9 @@ mkdir -p "$COMFY_DIR/models/diffusion_models" "$COMFY_DIR/models/text_encoders" 
 [[ -s "$COMFY_DIR/models/vae/$QWEN_VAE" ]] || wget --continue --output-document="$COMFY_DIR/models/vae/$QWEN_VAE" "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/$QWEN_VAE"
 
 log "Cài môi trường StoryFrame"
-python3 -m venv "$APP_DIR/.venv-linux"
-"$APP_DIR/.venv-linux/bin/python" -m pip install --upgrade pip
-"$APP_DIR/.venv-linux/bin/pip" install -r "$APP_DIR/requirements.txt"
+python3 -m venv "$APP_DIR/.venv-app"
+"$APP_DIR/.venv-app/bin/python" -m pip install --upgrade pip
+"$APP_DIR/.venv-app/bin/pip" install -r "$APP_DIR/requirements.txt"
 cat > "$APP_DIR/.env" <<EOF
 OLLAMA_URL=http://127.0.0.1:11434
 OLLAMA_STORY_MODEL=$STORY_MODEL
@@ -135,6 +136,9 @@ COMFYUI_RENDER_RETRIES=2
 COMFYUI_TIMEOUT_SECONDS=1800
 COMFYUI_POLL_SECONDS=1
 EOF
+
+log "Cài môi trường cho Control Center và toàn bộ project con"
+bash "$SCRIPT_DIR/install-project-envs.sh"
 
 log "Tạo systemd service"
 CURRENT_USER="$(id -un)"
@@ -166,7 +170,7 @@ Requires=storyframe-comfyui.service
 Type=simple
 User=$CURRENT_USER
 WorkingDirectory=$APP_DIR
-ExecStart=$APP_DIR/.venv-linux/bin/python -m uvicorn app:app --host 0.0.0.0 --port $APP_PORT
+ExecStart=$APP_DIR/.venv-app/bin/python -m uvicorn app:app --host 127.0.0.1 --port $APP_PORT
 Restart=on-failure
 RestartSec=5
 
@@ -174,9 +178,27 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 $SUDO install -m 0644 /tmp/storyframe.service /etc/systemd/system/storyframe.service
-rm -f /tmp/storyframe-comfyui.service /tmp/storyframe.service
+
+cat > /tmp/control-center.service <<EOF
+[Unit]
+Description=Control Center
+After=network-online.target
+
+[Service]
+Type=simple
+User=$CURRENT_USER
+WorkingDirectory=$CONTROL_DIR
+ExecStart=$CONTROL_DIR/.venv-linux/bin/python -m uvicorn app:app --host 127.0.0.1 --port 7999
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+$SUDO install -m 0644 /tmp/control-center.service /etc/systemd/system/control-center.service
+rm -f /tmp/storyframe-comfyui.service /tmp/storyframe.service /tmp/control-center.service
 $SUDO systemctl daemon-reload
-$SUDO systemctl enable --now storyframe-comfyui storyframe
+$SUDO systemctl enable --now storyframe-comfyui storyframe control-center
 
 log "Chờ service sẵn sàng"
 for _ in {1..60}; do

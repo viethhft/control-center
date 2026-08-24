@@ -192,6 +192,13 @@ def project_endpoint(project_id: str) -> tuple[str, int]:
     return parsed.hostname or "127.0.0.1", parsed.port or (443 if parsed.scheme == "https" else 80)
 
 
+def project_command(item: dict[str, Any]) -> list[str]:
+    """Select the native project command without leaking OS path rules into the UI."""
+    if os.name != "nt" and item.get("command_linux"):
+        return list(item["command_linux"])
+    return list(item["command"])
+
+
 def port_is_open(project_id: str) -> bool:
     host, port = project_endpoint(project_id)
     try:
@@ -325,7 +332,7 @@ def start_project(project_id: str, request: Request, user=Depends(current_user))
         if existing and existing.poll() is None:
             return {"status": "running", "pid": existing.pid}
         cwd = (ROOT / item["directory"]).resolve()
-        command = list(item["command"])
+        command = project_command(item)
         executable = Path(command[0])
         if not executable.is_absolute():
             command[0] = str((cwd / executable).resolve())

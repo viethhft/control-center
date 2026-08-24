@@ -2,7 +2,7 @@ $ErrorActionPreference = 'SilentlyContinue'
 $targets = @(
   @{ Name = 'Ollama'; Url = 'http://127.0.0.1:11434/api/tags' },
   @{ Name = 'ComfyUI'; Url = 'http://127.0.0.1:8188/system_stats' },
-  @{ Name = 'StoryFrame'; Url = 'http://127.0.0.1:8000/api/health' }
+  @{ Name = 'StoryFrame'; Url = 'http://127.0.0.1:8010/api/health' }
 )
 foreach ($target in $targets) {
   try {

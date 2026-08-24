@@ -35,7 +35,8 @@ log "Cài package hệ thống và C compiler cho Triton"
 apt-get update
 env DEBIAN_FRONTEND=noninteractive apt-get install -y \
   git git-lfs curl wget ca-certificates ffmpeg libgl1 libglib2.0-0 \
-  python3 python3-venv python3-pip python3-dev build-essential gcc g++
+  python3 python3-venv python3-pip python3-dev build-essential gcc g++ \
+  adb libgl1-mesa-dev libx11-dev libxtst-dev
 
 log "Kiểm tra Ollama"
 command -v ollama >/dev/null || fail "Image không có Ollama. Nên tạo container từ ollama/ollama:latest."
@@ -88,9 +89,13 @@ COMFYUI_TIMEOUT_SECONDS=1800
 COMFYUI_POLL_SECONDS=1
 EOF
 
-log "Khởi động ComfyUI và StoryFrame"
+log "Cài môi trường cho Control Center và toàn bộ project con"
+bash "$SCRIPT_DIR/install-project-envs.sh"
+
+log "Khởi động Control Center, ComfyUI và StoryFrame"
 bash "$SCRIPT_DIR/start-container.sh"
 
 printf '\n\033[1;32mSETUP HOÀN TẤT\033[0m\n'
-printf 'Health: curl http://127.0.0.1:8000/api/health\n'
+printf 'Control Center: http://127.0.0.1:7999\n'
+printf 'StoryFrame:    http://127.0.0.1:8010/api/health\n'
 printf 'Logs:   tail -F %s/runtime/logs/storyframe.log %s/runtime/logs/comfyui.log\n' "$APP_DIR" "$APP_DIR"

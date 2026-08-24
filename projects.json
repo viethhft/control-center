@@ -5,6 +5,7 @@
     "description": "Tạo giọng đọc và truyện phân vai.",
     "directory": "projects/text-to-speech-app",
     "command": [".venv/Scripts/python.exe", "-m", "uvicorn", "app:app", "--host", "127.0.0.1", "--port", "8000"],
+    "command_linux": [".venv-linux/bin/python", "-m", "uvicorn", "app:app", "--host", "127.0.0.1", "--port", "8000"],
     "url": "http://127.0.0.1:8000",
     "health_url": "http://127.0.0.1:8000/",
     "features": [
@@ -19,6 +20,7 @@
     "description": "Phân tích truyện, storyboard và tạo ảnh.",
     "directory": "projects/genarate-image",
     "command": [".venv/Scripts/python.exe", "-m", "uvicorn", "app:app", "--host", "127.0.0.1", "--port", "8010"],
+    "command_linux": [".venv-app/bin/python", "-m", "uvicorn", "app:app", "--host", "127.0.0.1", "--port", "8010"],
     "url": "http://127.0.0.1:8010",
     "health_url": "http://127.0.0.1:8010/api/health",
     "features": [
@@ -33,6 +35,7 @@
     "description": "Nghiên cứu, cải biên và phát triển truyện theo từng thể loại.",
     "directory": "projects/story-research-lab",
     "command": ["../genarate-image/.venv/Scripts/python.exe", "-m", "uvicorn", "app:app", "--host", "127.0.0.1", "--port", "8020"],
+    "command_linux": [".venv-linux/bin/python", "-m", "uvicorn", "app:app", "--host", "127.0.0.1", "--port", "8020"],
     "url": "http://127.0.0.1:8020",
     "health_url": "http://127.0.0.1:8020/api/health",
     "features": [{"id":"research","name":"Nghiên cứu truyện"},{"id":"adapt","name":"Cải biên sáng tạo"},{"id":"develop","name":"Phát triển truyện mới"}]
@@ -43,6 +46,7 @@
     "description": "Phân tích và gắn chỉ dẫn cảm xúc cho văn bản đọc AI.",
     "directory": "projects/emotion-markup-studio",
     "command": ["../genarate-image/.venv/Scripts/python.exe", "-m", "uvicorn", "app:app", "--host", "127.0.0.1", "--port", "8030"],
+    "command_linux": [".venv-linux/bin/python", "-m", "uvicorn", "app:app", "--host", "127.0.0.1", "--port", "8030"],
     "url": "http://127.0.0.1:8030",
     "health_url": "http://127.0.0.1:8030/api/health",
     "features": [{"id":"analyze","name":"Phân tích cảm xúc"},{"id":"markup","name":"Gắn cue cho TTS"},{"id":"export","name":"Xuất văn bản"}]
@@ -53,6 +57,7 @@
     "description": "Monitor và điều khiển máy tính, Android và nguồn màn hình iOS trên web.",
     "directory": "projects/remote-device-hub",
     "command": ["../genarate-image/.venv/Scripts/python.exe", "-m", "uvicorn", "app:app", "--host", "127.0.0.1", "--port", "8040"],
+    "command_linux": [".venv-linux/bin/python", "-m", "uvicorn", "app:app", "--host", "127.0.0.1", "--port", "8040"],
     "url": "http://127.0.0.1:8040",
     "health_url": "http://127.0.0.1:8040/api/health",
     "features": [

@@ -50,6 +50,7 @@ COMFYUI_GATE = asyncio.Semaphore(COMFYUI_CONCURRENCY)
 JOBS: dict[str, dict[str, Any]] = {}
 ANALYSIS_TASKS: dict[str, asyncio.Task] = {}
 RENDER_JOBS: dict[str, dict[str, Any]] = {}
+RENDER_TASKS: dict[str, asyncio.Task] = {}
 PROJECT_LOCKS: dict[str, asyncio.Lock] = {}
 app = FastAPI(title="StoryFrame Studio", version="0.4.0")
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
@@ -1274,12 +1275,12 @@ async def retry_analysis(jid: str):
 
 @app.post("/api/projects/{pid}")
 async def save(pid: str, body: ProjectPayload):
+    ensure_render_resources_available(pid, ["project:*"])
     folder = safe(pid)
     folder.mkdir(exist_ok=True)
     body.project["id"] = pid
-    (folder / "project.json").write_text(
-        json.dumps(body.project, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    async with project_lock(pid):
+        write_json_atomic(folder / "project.json", body.project)
     return {"ok": True}
 
 
@@ -1309,14 +1310,27 @@ async def delete_project(pid: str):
         JOBS.pop(jid, None)
         for path in ANALYSIS_JOB_DIR.glob(f"{jid}.*.json"):
             path.unlink(missing_ok=True)
+    related_render_jobs: set[str] = set()
+    for jid, render_job in list(RENDER_JOBS.items()):
+        if str(render_job.get("project_id")) == pid:
+            related_render_jobs.add(jid)
     for path in RENDER_JOB_DIR.glob("*.json"):
         try:
             render_job = json.loads(path.read_text(encoding="utf-8"))
             if str(render_job.get("project_id")) == pid:
-                RENDER_JOBS.pop(str(render_job.get("id", "")), None)
-                path.unlink(missing_ok=True)
+                related_render_jobs.add(str(render_job.get("id") or path.stem))
         except Exception:
             continue
+    for jid in related_render_jobs:
+        task = RENDER_TASKS.get(jid)
+        if task and not task.done():
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+        RENDER_JOBS.pop(jid, None)
+        render_job_file(jid).unlink(missing_ok=True)
     if folder.exists():
         resolved = folder.resolve()
         if resolved.parent != PROJECTS.resolve():
@@ -1324,7 +1338,11 @@ async def delete_project(pid: str):
         shutil.rmtree(resolved)
     if not related_jobs and not project_existed:
         raise HTTPException(404, "Không tìm thấy dự án")
-    return {"ok": True, "project_id": pid, "deleted_jobs": len(related_jobs)}
+    return {
+        "ok": True,
+        "project_id": pid,
+        "deleted_jobs": len(related_jobs) + len(related_render_jobs),
+    }
 
 
 @app.get("/api/projects/{pid}")
@@ -1718,7 +1736,13 @@ async def render_comfy(
 
 
 async def render_one(
-    project: dict, path: Path, scene: dict, width: int, height: int, steps: int
+    project: dict,
+    path: Path,
+    scene: dict,
+    width: int,
+    height: int,
+    steps: int,
+    quality: Literal["draft", "final"] = "final",
 ) -> dict:
     last: Exception | None = None
     for attempt in range(COMFYUI_RETRIES + 1):
@@ -1734,13 +1758,14 @@ async def render_one(
             await asyncio.sleep(min(8, 2**attempt))
     else:
         raise last or RuntimeError("Render failed")
-    images = path.parent / "images"
-    images.mkdir(exist_ok=True)
+    images = path.parent / "images" / quality
+    images.mkdir(parents=True, exist_ok=True)
     (images / f'{scene["id"]}.png').write_bytes(data)
-    scene["image_url"] = (
-        f'/projects/{project["id"]}/images/{scene["id"]}.png?v={int(time.time())}'
-    )
-    scene["render_meta"] = {
+    image_url = f'/projects/{project["id"]}/images/{quality}/{scene["id"]}.png?v={int(time.time())}'
+    scene[f"{quality}_image_url"] = image_url
+    if quality == "final" or not scene.get("final_image_url"):
+        scene["image_url"] = image_url
+    render_meta = {
         "backend": "comfyui",
         "checkpoint": checkpoint,
         "profile": profile,
@@ -1748,10 +1773,29 @@ async def render_one(
         "steps": steps,
         "timing": timing,
         "workflow": "custom" if COMFYUI_WORKFLOW else "built-in",
+        "quality": quality,
     }
-    path.write_text(json.dumps(project, ensure_ascii=False, indent=2), encoding="utf-8")
+    scene.setdefault("renders", {})[quality] = render_meta
+    scene["render_meta"] = render_meta
+    # Merge only this scene's render fields into the latest project snapshot so a
+    # character selection or another completed scene cannot be overwritten.
+    async with project_lock(str(project["id"])):
+        latest = json.loads(path.read_text(encoding="utf-8"))
+        latest_scene = next(
+            (item for item in latest.get("scenes", []) if item.get("id") == scene.get("id")),
+            None,
+        )
+        if not latest_scene:
+            raise ValueError(f'Mất cảnh {scene.get("id")} khi lưu kết quả render')
+        latest_scene[f"{quality}_image_url"] = image_url
+        if quality == "final" or not latest_scene.get("final_image_url"):
+            latest_scene["image_url"] = image_url
+        latest_scene.setdefault("renders", {})[quality] = render_meta
+        latest_scene["render_meta"] = render_meta
+        write_json_atomic(path, latest)
     return {
-        "image_url": scene["image_url"],
+        "image_url": image_url,
+        "quality": quality,
         "seed": seed,
         "checkpoint": checkpoint,
         "profile": profile,
@@ -1873,6 +1917,8 @@ async def start_character_references(pid: str, cid: str):
     path = folder / "project.json"
     if not path.exists():
         raise HTTPException(404, "Không tìm thấy dự án")
+    resources = [f"character:{cid}"]
+    ensure_render_resources_available(pid, resources)
     jid = uuid.uuid4().hex
     RENDER_JOBS[jid] = {
         "id": jid,
@@ -1880,12 +1926,14 @@ async def start_character_references(pid: str, cid: str):
         "kind": "character_references",
         "project_id": pid,
         "character_id": cid,
+        "request": {"project_id": pid, "character_id": cid},
+        "resource_keys": resources,
         "progress": 0,
         "message": "Đang xếp hàng tạo nhân vật",
         "errors": [],
     }
     set_render_job(jid)
-    asyncio.create_task(character_reference_job(jid, pid, cid))
+    launch_render_task(jid, character_reference_job(jid, pid, cid))
     return {"job_id": jid}
 
 
@@ -1895,6 +1943,7 @@ async def select_character_reference(pid: str, cid: str, body: ReferenceSelectRe
     path = folder / "project.json"
     if not path.exists():
         raise HTTPException(404, "Không tìm thấy dự án")
+    ensure_render_resources_available(pid, [f"character:{cid}"])
     async with project_lock(pid):
         project = json.loads(path.read_text(encoding="utf-8"))
         character = next(
@@ -1936,6 +1985,7 @@ async def upload_character_reference(pid: str, cid: str, image: UploadFile = Fil
     path = folder / "project.json"
     if not path.exists():
         raise HTTPException(404, "Không tìm thấy project")
+    ensure_render_resources_available(pid, [f"character:{cid}"])
     allowed = {"image/png": ".png", "image/jpeg": ".jpg", "image/webp": ".webp"}
     if image.content_type not in allowed:
         raise HTTPException(415, "Chỉ hỗ trợ ảnh PNG, JPG hoặc WebP")
@@ -1980,7 +2030,7 @@ async def upload_character_reference(pid: str, cid: str, image: UploadFile = Fil
     }
 
 
-@app.post("/api/generate")
+@app.post("/api/generate", status_code=202)
 async def generate(req: GenerateRequest):
     folder = safe(req.project_id)
     path = folder / "project.json"
@@ -1990,22 +2040,27 @@ async def generate(req: GenerateRequest):
     scene = next((x for x in project["scenes"] if x["id"] == req.scene_id), None)
     if not scene:
         raise HTTPException(404, "Không tìm thấy cảnh")
-    if req.quality == "draft":
-        req.width, req.height = {
-            "9:16": (576, 1024),
-            "1:1": (768, 768),
-            "4:3": (896, 672),
-        }.get(project.get("aspect_ratio"), (1024, 576))
-        req.steps = 6
-    try:
-        return await render_one(project, path, scene, req.width, req.height, req.steps)
-    except httpx.ConnectError as exc:
-        raise HTTPException(
-            503,
-            f"Không kết nối được ComfyUI tại {COMFYUI_URL}. Hãy chạy ComfyUI trên cổng 8188.",
-        ) from exc
-    except Exception as exc:
-        raise HTTPException(503, f"ComfyUI: {type(exc).__name__}: {exc}") from exc
+    resources = [f"scene:{req.scene_id}"] + [
+        f"character:{cid}" for cid in (scene.get("characters") or [])
+    ]
+    ensure_render_resources_available(req.project_id, resources)
+    jid = uuid.uuid4().hex
+    RENDER_JOBS[jid] = {
+        "id": jid,
+        "status": "queued",
+        "kind": "scene",
+        "project_id": req.project_id,
+        "scene_id": req.scene_id,
+        "quality": req.quality,
+        "request": req.model_dump(),
+        "resource_keys": resources,
+        "progress": 0,
+        "message": f"Đang xếp hàng render {req.quality}",
+        "errors": [],
+    }
+    set_render_job(jid)
+    launch_render_task(jid, scene_render_job(jid, req))
+    return {"job_id": jid, "status": "queued"}
 
 
 def render_job_file(jid: str) -> Path:
@@ -2022,13 +2077,81 @@ def set_render_job(jid: str, **values: Any) -> None:
     temporary.replace(target)
 
 
+def ensure_render_resources_available(project_id: str, resources: list[str]) -> None:
+    wanted = set(resources)
+    for job in RENDER_JOBS.values():
+        if job.get("project_id") != project_id:
+            continue
+        if job.get("status") not in {"queued", "running"}:
+            continue
+        active = set(job.get("resource_keys") or [])
+        if "project:*" in active or "project:*" in wanted or active & wanted:
+            raise HTTPException(
+                409,
+                f"Tài nguyên đang được job {job.get('id')} xử lý: "
+                + ", ".join(sorted(active & wanted or active or wanted)),
+            )
+
+
+def launch_render_task(jid: str, coroutine) -> asyncio.Task:
+    existing = RENDER_TASKS.get(jid)
+    if existing and not existing.done():
+        raise HTTPException(409, "Tiến trình render vẫn đang chạy")
+    task = asyncio.create_task(coroutine, name=f"render:{jid}")
+    RENDER_TASKS[jid] = task
+
+    def forget(done: asyncio.Task) -> None:
+        if RENDER_TASKS.get(jid) is done:
+            RENDER_TASKS.pop(jid, None)
+
+    task.add_done_callback(forget)
+    return task
+
+
+async def scene_render_job(jid: str, req: GenerateRequest) -> None:
+    try:
+        folder = safe(req.project_id)
+        path = folder / "project.json"
+        project = json.loads(path.read_text(encoding="utf-8"))
+        scene = next((x for x in project["scenes"] if x["id"] == req.scene_id), None)
+        if not scene:
+            raise ValueError(f"Không tìm thấy cảnh {req.scene_id}")
+        if req.quality == "draft":
+            req.width, req.height = {
+                "9:16": (576, 1024),
+                "1:1": (768, 768),
+                "4:3": (896, 672),
+            }.get(project.get("aspect_ratio"), (1024, 576))
+            req.steps = 6
+        set_render_job(jid, status="running", progress=5, message=f"Đang render {req.scene_id}")
+        result = await render_one(
+            project, path, scene, req.width, req.height, req.steps, req.quality
+        )
+        set_render_job(
+            jid,
+            status="completed",
+            progress=100,
+            result=result,
+            message=f"Đã render {req.quality} cho {req.scene_id}",
+        )
+    except Exception as exc:
+        set_render_job(
+            jid,
+            status="failed",
+            error=f"{type(exc).__name__}: {exc}",
+            message=f"Render {req.scene_id} thất bại",
+        )
+
+
 async def render_all_job(jid: str, req: RenderAllRequest):
     try:
         folder = safe(req.project_id)
         path = folder / "project.json"
         project = json.loads(path.read_text(encoding="utf-8"))
+        quality_field = f"{req.quality}_image_url"
         scenes = [
-            s for s in project["scenes"] if req.overwrite or not s.get("image_url")
+            s for s in project["scenes"]
+            if req.overwrite or not s.get(quality_field)
         ]
         total = len(scenes)
         set_render_job(jid, status="running", total=total, completed=0, progress=0)
@@ -2066,7 +2189,9 @@ async def render_all_job(jid: str, req: RenderAllRequest):
             )
             set_render_job(jid)
             try:
-                await render_one(project, path, scene, width, height, steps)
+                await render_one(
+                    project, path, scene, width, height, steps, req.quality
+                )
             except Exception as exc:
                 RENDER_JOBS[jid].setdefault("errors", []).append(
                     {"scene_id": scene["id"], "error": f"{type(exc).__name__}: {exc}"}
@@ -2086,15 +2211,22 @@ async def render_all_job(jid: str, req: RenderAllRequest):
 
 @app.post("/api/generate/jobs", status_code=202)
 async def start_render_all(req: RenderAllRequest):
+    ensure_render_resources_available(req.project_id, ["project:*"])
     jid = uuid.uuid4().hex
     RENDER_JOBS[jid] = {
         "id": jid,
         "status": "queued",
+        "kind": "bulk",
+        "project_id": req.project_id,
+        "quality": req.quality,
+        "request": req.model_dump(),
+        "resource_keys": ["project:*"],
         "progress": 0,
         "message": "Đang xếp hàng ComfyUI…",
         "errors": [],
     }
-    asyncio.create_task(render_all_job(jid, req))
+    set_render_job(jid)
+    launch_render_task(jid, render_all_job(jid, req))
     return {"job_id": jid}
 
 
@@ -2106,3 +2238,63 @@ async def render_status(jid: str):
     if jid not in RENDER_JOBS:
         raise HTTPException(404, "Không tìm thấy tiến trình render")
     return RENDER_JOBS[jid]
+
+
+@app.get("/api/generate/jobs")
+async def list_render_jobs(project_id: str | None = None):
+    for target in RENDER_JOB_DIR.glob("*.json"):
+        jid = target.stem
+        if jid in RENDER_JOBS:
+            continue
+        try:
+            RENDER_JOBS[jid] = json.loads(target.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+    rows = [
+        job for job in RENDER_JOBS.values()
+        if not project_id or job.get("project_id") == project_id
+    ]
+    return sorted(rows, key=lambda item: item.get("updated_at", 0), reverse=True)[:100]
+
+
+@app.on_event("startup")
+async def restore_render_jobs():
+    for target in RENDER_JOB_DIR.glob("*.json"):
+        jid = ""
+        try:
+            job = json.loads(target.read_text(encoding="utf-8"))
+            jid = str(job.get("id") or target.stem)
+            RENDER_JOBS[jid] = job
+            if job.get("status") not in {"queued", "running"}:
+                continue
+            request = job.get("request") or {}
+            kind = job.get("kind")
+            set_render_job(
+                jid,
+                status="queued",
+                message="Backend vừa khởi động lại · đang khôi phục hàng đợi render",
+                resumed=True,
+            )
+            if kind == "scene":
+                req = GenerateRequest.model_validate(request)
+                launch_render_task(jid, scene_render_job(jid, req))
+            elif kind == "bulk":
+                req = RenderAllRequest.model_validate(request)
+                launch_render_task(jid, render_all_job(jid, req))
+            elif kind == "character_references":
+                pid = str(request["project_id"])
+                cid = str(request["character_id"])
+                launch_render_task(jid, character_reference_job(jid, pid, cid))
+            else:
+                set_render_job(
+                    jid,
+                    status="failed",
+                    error="Job cũ không có dữ liệu để khôi phục",
+                )
+        except Exception as exc:
+            if jid and jid in RENDER_JOBS:
+                set_render_job(
+                    jid,
+                    status="failed",
+                    error=f"Không thể khôi phục: {type(exc).__name__}: {exc}",
+                )

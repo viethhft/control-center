@@ -1,0 +1,94 @@
+Traceback (most recent call last):
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 75, in run
+    return raw
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 74, in control
+    self.size = (width, height)
+  File "C:\Program Files\Python310\lib\asyncio\threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+  File "C:\Program Files\Python310\lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 55, in input
+    deadline=time.time()+8
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 14, in adb
+    command = [binary]
+  File "C:\Program Files\Python310\lib\subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'shell', 'input', 'text', 'tao%sthích']' returned non-zero exit status 255.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 81, in <module>
+    elif event["action"] == "text": adb("shell", "input", "text", event.get("text", "").replace(" ", "%s"), binary=self.adb_binary, serial=self.serial)
+  File "C:\Program Files\Python310\lib\asyncio\runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "C:\Program Files\Python310\lib\asyncio\base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 77, in run
+    width, height = self.size; x, y = int(event.get("x", 0)*width), int(event.get("y", 0)*height)
+  File "C:\Program Files\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\u1ea5' in position 1: character maps to <undefined>
+Traceback (most recent call last):
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 110, in run
+    await asyncio.gather(stream(), control())
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 98, in stream
+    if not frame: raise ConnectionError("Lu\u1ed3ng scrcpy \u0111ã \u0111óng")
+ConnectionError: Lu\u1ed3ng scrcpy \u0111ã \u0111óng
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 117, in <module>
+    parser=argparse.ArgumentParser(); parser.add_argument("--server",default="http://127.0.0.1:8040"); parser.add_argument("--device-id",required=True); parser.add_argument("--token",required=True); parser.add_argument("--enrollment",required=True); parser.add_argument("--kind",choices=["desktop","android"],default="desktop"); parser.add_argument("--fps",type=int,default=8); parser.add_argument("--quality",type=int,default=65); parser.add_argument("--adb",default="adb"); parser.add_argument("--serial",default=""); parser.add_argument("--scrcpy-server",default=str(Path(__file__).resolve().parent/"scrcpy-server-v4.1")); asyncio.run(run(parser.parse_args()))
+  File "C:\Program Files\Python310\lib\asyncio\runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "C:\Program Files\Python310\lib\asyncio\base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 113, in run
+    print(f"M\u1ea5t k\u1ebft n\u1ed1i: {exc}. Th\u1eed l\u1ea1i sau 3 giây..."); await asyncio.sleep(3)
+  File "C:\Program Files\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\u1ea5' in position 1: character maps to <undefined>
+Traceback (most recent call last):
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 121, in run
+    await asyncio.gather(stream(), control())
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 109, in stream
+    if not frame: raise ConnectionError("Lu\u1ed3ng scrcpy \u0111ã \u0111óng")
+ConnectionError: Lu\u1ed3ng scrcpy \u0111ã \u0111óng
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 128, in <module>
+    parser=argparse.ArgumentParser(); parser.add_argument("--server",default="http://127.0.0.1:8040"); parser.add_argument("--device-id",required=True); parser.add_argument("--token",required=True); parser.add_argument("--enrollment",required=True); parser.add_argument("--kind",choices=["desktop","android"],default="desktop"); parser.add_argument("--fps",type=int,default=8); parser.add_argument("--quality",type=int,default=65); parser.add_argument("--adb",default="adb"); parser.add_argument("--serial",default=""); parser.add_argument("--scrcpy-server",default=str(Path(__file__).resolve().parent/"scrcpy-server-v4.1")); asyncio.run(run(parser.parse_args()))
+  File "C:\Program Files\Python310\lib\asyncio\runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "C:\Program Files\Python310\lib\asyncio\base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "E:\Viet\MMO\remote-device-hub\agent.py", line 124, in run
+    print(f"Connection lost: {exc}. Retry in 3 seconds..."); await asyncio.sleep(3)
+  File "C:\Program Files\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\u1ed3' in position 19: character maps to <undefined>
+Connection lost: ConnectionClosedError(Close(code=1012, reason=''), Close(code=1012, reason=''), True). Retry in 3 seconds...
+Connection lost: ConnectionRefusedError(22, 'The remote computer refused the network connection', None, 1225, None). Retry in 3 seconds...
+Connection lost: ConnectionError('Lu\u1ed3ng scrcpy \u0111\xe3 \u0111\xf3ng'). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: CalledProcessError(1, ['E:\\Viet\\MMO\\remote-device-hub\\platform-tools\\adb.exe', '-s', '10AF2P1Z9K001YU', 'push', 'E:\\Viet\\MMO\\remote-device-hub\\scrcpy-server-v4.1', '/data/local/tmp/scrcpy-server-hub.jar']). Retry in 3 seconds...
+Connection lost: ConnectionClosedError(Close(code=1012, reason=''), Close(code=1012, reason=''), True). Retry in 3 seconds...
+Connection lost: ConnectionRefusedError(22, 'The remote computer refused the network connection', None, 1225, None). Retry in 3 seconds...
+Connection lost: ConnectionClosedError(Close(code=1012, reason=''), Close(code=1012, reason=''), True). Retry in 3 seconds...

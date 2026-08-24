@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emotion Markup Studio</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <aside><span class="brand">EM</span><div><b>Emotion Markup</b><small>VOICE DIRECTION STUDIO</small></div></aside>
+  <main>
+    <header><span>AI VOICE DIRECTION</span><h1>Thêm <em>cảm xúc</em> cho từng nhịp kể.</h1><p>AI phân tích ngữ cảnh và gắn cue tương thích trực tiếp với TTS Studio.</p></header>
+    <section class="workspace">
+      <article class="config">
+        <h2>01 · Định hướng</h2>
+        <label>Tên bản xử lý<input id="title" value="Văn bản mới"></label>
+        <label>Thể loại<select id="genre"><option>Tự động</option><option>Hài hước</option><option>Ngôn tình</option><option>Trinh thám</option><option>Kinh dị</option><option>Fantasy</option><option>Đời thường</option></select></label>
+        <label>Mức biểu cảm<select id="intensity"><option value="subtle">Tiết chế</option><option value="balanced" selected>Cân bằng</option><option value="dramatic">Kịch tính</option></select></label>
+        <label>Bối cảnh / chỉ dẫn<textarea id="context" rows="4" placeholder="Ví dụ: người kể dí dỏm, đoạn cuối lắng lại..."></textarea></label>
+        <div class="cue-list"><small>CUE HỖ TRỢ</small><p>[laughs] [chuckles] [sighs] [whispers] [excited] [surprised] [angry] [sad] [fearful] [tender] [tense]</p></div>
+      </article>
+      <article class="content">
+        <h2>02 · Văn bản</h2>
+        <textarea id="text" placeholder="Dán truyện, lời thoại hoặc nội dung cần thêm biểu cảm..."></textarea>
+        <div class="meta"><span id="count">0 ký tự</span><span>Văn bản gốc luôn được giữ nguyên</span></div>
+      </article>
+    </section>
+    <div id="error" class="error" hidden></div>
+    <button id="analyze" class="primary">Phân tích & gắn cảm xúc <b>→</b></button>
+    <section id="result" class="result" hidden>
+      <div><span>KẾT QUẢ TTS-READY</span><h2>Văn bản đã có chỉ dẫn cảm xúc</h2></div>
+      <div class="actions"><button id="copy">Sao chép</button><button id="download">Tải .txt</button></div>
+      <textarea id="output" readonly></textarea>
+      <p id="summary"></p>
+    </section>
+  </main>
+  <div id="toast"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

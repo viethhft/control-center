@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#101513">
+    <title>Control Center</title>
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/static/style.css?v=3">
+    <link rel="stylesheet" href="/static/admin.css?v=1">
+    <link rel="stylesheet" href="/static/ui-dialog.css?v=1">
+</head>
+
+<body>
+<section id="bootScreen" class="boot-screen"><div class="boot-mark">CC</div><span>Đang kiểm tra phiên đăng nhập…</span></section>
+<section id="login" class="login-screen" hidden>
+        <div class="login-brand"><span>CC</span>
+            <div><b>Control Center</b><small>APP PLATFORM</small></div>
+        </div>
+        <article class="login-card"><span class="eyebrow">QUẢN TRỊ HỆ THỐNG</span>
+            <h1>Chào mừng trở lại.</h1>
+            <p>Đăng nhập để vận hành dự án và quản lý quyền truy cập.</p>
+            <form id="loginForm"><label><span>Tài khoản</span><input name="username" autocomplete="username"
+                        required></label><label><span>Mật khẩu</span><input name="password" type="password"
+                        autocomplete="current-password" required></label><button class="primary"
+                    type="submit"><span>Đăng nhập</span><b>→</b></button></form>
+            <p id="loginError" class="error" role="alert"></p>
+        </article>
+    </section>
+    <section id="dashboard" hidden>
+        <aside>
+            <div class="brand"><span>CC</span>
+                <div><b>Control Center</b><small>APP PLATFORM</small></div>
+            </div>
+            <nav><button class="nav-item active" data-view="apps"><i>01</i><span>Ứng dụng<small>Vận hành dự
+                            án</small></span></button><button class="nav-item admin-only" data-view="access"
+                    hidden><i>02</i><span>Truy cập<small>User và phân quyền</small></span></button><button
+                    class="nav-item admin-only" data-view="audit" hidden><i>03</i><span>Nhật ký<small>Lịch sử thao
+                            tác</small></span></button></nav>
+            <div class="side-account"><span class="avatar" id="avatar">A</span>
+                <div><b id="accountName">—</b><small id="accountRole">—</small></div><button id="logout"
+                    title="Đăng xuất">↗</button>
+            </div>
+        </aside>
+        <div class="shell">
+            <header class="topbar">
+                <div><span class="eyebrow">WORKSPACE CONTROL</span>
+                    <h1 id="viewTitle">Ứng dụng của bạn</h1>
+                    <p id="viewDescription">Khởi động, theo dõi và mở các công cụ trong cùng một nơi.</p>
+                </div>
+                <div class="server-status"><i></i><span>Control Server<small>ĐANG HOẠT ĐỘNG</small></span></div>
+            </header>
+            <main>
+                <section id="appsView" class="view active">
+                    <div class="summary-grid">
+                        <article><small>TỔNG DỰ ÁN</small><strong id="projectCount">0</strong><span>được cấp
+                                quyền</span></article>
+                        <article><small>ĐANG CHẠY</small><strong id="runningCount">0</strong><span>process hoạt
+                                động</span></article>
+                        <article><small>CHỨC NĂNG</small><strong id="featureCount">0</strong><span>có thể sử dụng</span>
+                        </article>
+                    </div>
+                    <div class="section-heading">
+                        <div><span class="eyebrow">PROJECT LAUNCHER</span>
+                            <h2>Các ứng dụng</h2>
+                        </div><button id="refreshProjects" class="quiet">↻ Làm mới</button>
+                    </div>
+                    <div id="projects" class="project-grid"></div>
+                </section>
+                <section id="accessView" class="view">
+                    <div class="section-heading">
+                        <div><span class="eyebrow">ACCESS CONTROL</span>
+                            <h2>Người dùng và quyền</h2>
+                            <p>Sửa tài khoản, giới hạn IP, vô hiệu hóa hoặc ban vĩnh viễn.</p>
+                        </div><button id="toggleUserForm" class="primary compact">+ Thêm người dùng</button>
+                    </div>
+                    <article id="userComposer" class="panel composer" hidden>
+                        <div class="panel-head">
+                            <div><small id="composerLabel">TÀI KHOẢN MỚI</small>
+                                <h3 id="composerTitle">Thông tin truy cập</h3>
+                            </div><button id="closeUserForm" class="icon-button">×</button>
+                        </div>
+                        <form id="userForm"><input type="hidden" name="user_id">
+                            <div class="form-grid"><label><span>Tài khoản</span><input name="username" minlength="3"
+                                        required></label><label><span>Mật khẩu</span><input name="password"
+                                        type="password" minlength="8"><small>Để trống khi sửa nếu không đổi mật
+                                        khẩu</small></label><label><span>Vai trò</span><select name="role">
+                                        <option value="user">Người dùng</option>
+                                        <option value="admin">Quản trị viên</option>
+                                    </select></label><label><span>IP cho phép</span><input name="ips"
+                                        placeholder="Để trống hoặc 127.0.0.1, 10.0.0.8"></label></div>
+                            <div class="permission-head"><b>Phạm vi quyền</b><small>Quyền điều khiển cho phép chạy và
+                                    dừng cả dự án.</small></div>
+                            <div id="permissions" class="permission-grid"></div>
+                            <div class="form-actions"><button type="button" class="quiet"
+                                    id="cancelUserForm">Hủy</button><button id="saveUserButton" class="primary compact"
+                                    type="submit">Tạo tài khoản</button></div>
+                        </form>
+                    </article>
+                    <div id="users" class="user-list"></div>
+                    <div class="section-heading sub-heading">
+                        <div><span class="eyebrow">NETWORK BLOCKLIST</span>
+                            <h2>IP bị chặn vĩnh viễn</h2>
+                        </div>
+                    </div>
+                    <article class="panel ip-panel">
+                        <form id="banIpForm"><input name="ip" placeholder="Ví dụ: 203.0.113.10" required><input
+                                name="reason" placeholder="Lý do chặn"><button class="primary compact">Chặn IP</button>
+                        </form>
+                        <div id="bannedIps" class="ip-list"></div>
+                    </article>
+                </section>
+                <section id="auditView" class="view">
+                    <div class="section-heading">
+                        <div><span class="eyebrow">SYSTEM ACTIVITY</span>
+                            <h2>Nhật ký thao tác</h2>
+                            <p>200 hoạt động quản trị gần nhất trên server.</p>
+                        </div><button id="refreshAudit" class="quiet">↻ Làm mới</button>
+                    </div>
+                    <div class="panel table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th>Người dùng</th>
+                                    <th>Thao tác</th>
+                                    <th>Đối tượng</th>
+                                    <th>IP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditRows"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </section>
+    <div id="toast" role="status"></div>
+  <script src="/static/ui-dialog.js?v=1"></script>
+  <script src="/static/app.js?v=3"></script>
+</body>
+
+</html>

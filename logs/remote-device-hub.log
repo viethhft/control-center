@@ -1,0 +1,506 @@
+INFO:     Started server process [10576]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8040 (Press CTRL+C to quit)
+INFO:     127.0.0.1:64362 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64362 - "GET /static/style.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60488 - "GET /static/app.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64362 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64362 - "GET /static/favicon.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64362 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64362 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61935 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61935 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61935 - "POST /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61935 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61935 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59076 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59076 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59076 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57394 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58306 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58306 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65413 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65413 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61556 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61556 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61556 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50368 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50368 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50368 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50368 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60085 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49352 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56012 - "WebSocket /ws/agent/DEVICE_ID_MOI?token=TOKEN_MOI&enrollment=change-me-device-hub" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59690 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53883 - "WebSocket /ws/view/c570dce2dce8" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:54325 - "GET / HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:54325 - "GET /static/style.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56591 - "GET /static/app.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56591 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54325 - "GET /static/favicon.svg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59675 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54203 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54203 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54203 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59670 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59670 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59670 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59670 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59670 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50090 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50090 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62548 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61899 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54866 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54866 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54866 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54866 - "GET /static/style.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61456 - "GET /static/app.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61456 - "GET /static/android-detect.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54866 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54866 - "GET /static/favicon.svg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54866 - "DELETE /api/devices/c570dce2dce8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54866 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54866 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54866 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54866 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54866 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54866 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54866 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56506 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56506 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56506 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56506 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56506 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56506 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56506 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56506 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56506 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56506 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59386 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59386 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53737 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53737 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53737 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53737 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53737 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53737 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53737 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53737 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53737 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53737 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53737 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53737 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53737 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53737 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49673 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51606 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51606 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62196 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62196 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57924 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57924 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57924 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57924 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57924 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64972 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59491 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55179 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55179 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55179 - "GET /static/style.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:57639 - "GET /static/app.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:57639 - "GET /static/android-detect.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55179 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55179 - "GET /static/favicon.svg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55179 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55179 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55179 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55179 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55179 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55179 - "GET /api/android/connected HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55179 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     Started server process [16876]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8040 (Press CTRL+C to quit)
+INFO:     127.0.0.1:61673 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61673 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61673 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61673 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49673 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49673 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49673 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49673 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49673 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49673 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63700 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53818 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53818 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53818 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53818 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56586 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56586 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50310 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50310 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50310 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50310 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58748 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50381 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52077 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52077 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52077 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52077 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52077 - "POST /api/android/connect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52077 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52077 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55940 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:54848 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:56835 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:56055 - "GET / HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     connection closed
+INFO:     connection closed
+INFO:     127.0.0.1:56288 - "GET /static/app.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56055 - "GET /static/style.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56055 - "GET /static/android-detect.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56288 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56288 - "GET /static/favicon.svg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:50233 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:62738 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:55345 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55353 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:56286 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56735 - "GET /api/devices HTTP/1.1" 200 OK
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\uvicorn\protocols\websockets\websockets_impl.py", line 244, in run_asgi
+    result = await self.app(self.scope, self.asgi_receive, self.asgi_send)  # type: ignore[func-returns-value]
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\middleware\errors.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 364, in handle
+    await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 97, in app
+    await wrap_app_handling_exceptions(app, session)(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 95, in app
+    await func(session)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\fastapi\routing.py", line 384, in app
+    await dependant.call(**solved_result.values)
+  File "E:\Viet\MMO\remote-device-hub\app.py", line 176, in agent_socket
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\websockets.py", line 57, in receive
+    raise RuntimeError('Cannot call "receive" once a disconnect message has been received.')
+RuntimeError: Cannot call "receive" once a disconnect message has been received.
+INFO:     connection closed
+INFO:     127.0.0.1:56743 - "POST /api/android/connect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56750 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:56743 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     Started server process [18344]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8040 (Press CTRL+C to quit)
+INFO:     127.0.0.1:53035 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:62879 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62879 - "GET /static/style.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55535 - "GET /static/app.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55535 - "GET /static/android-detect.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62879 - "GET /static/favicon.svg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55535 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62904 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:54211 - "GET / HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:54211 - "GET /static/app.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54211 - "GET /static/android-detect.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:57032 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51595 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\uvicorn\protocols\websockets\websockets_impl.py", line 244, in run_asgi
+    result = await self.app(self.scope, self.asgi_receive, self.asgi_send)  # type: ignore[func-returns-value]
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\middleware\errors.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 364, in handle
+    await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 97, in app
+    await wrap_app_handling_exceptions(app, session)(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 95, in app
+    await func(session)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\fastapi\routing.py", line 384, in app
+    await dependant.call(**solved_result.values)
+  File "E:\Viet\MMO\remote-device-hub\app.py", line 197, in agent_socket
+    message = await websocket.receive()
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\websockets.py", line 57, in receive
+    raise RuntimeError('Cannot call "receive" once a disconnect message has been received.')
+RuntimeError: Cannot call "receive" once a disconnect message has been received.
+INFO:     connection closed
+INFO:     connection closed
+INFO:     127.0.0.1:55175 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\uvicorn\protocols\websockets\websockets_impl.py", line 244, in run_asgi
+    result = await self.app(self.scope, self.asgi_receive, self.asgi_send)  # type: ignore[func-returns-value]
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\middleware\errors.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 364, in handle
+    await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 97, in app
+    await wrap_app_handling_exceptions(app, session)(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 95, in app
+    await func(session)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\fastapi\routing.py", line 384, in app
+    await dependant.call(**solved_result.values)
+  File "E:\Viet\MMO\remote-device-hub\app.py", line 197, in agent_socket
+    message = await websocket.receive()
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\websockets.py", line 57, in receive
+    raise RuntimeError('Cannot call "receive" once a disconnect message has been received.')
+RuntimeError: Cannot call "receive" once a disconnect message has been received.
+INFO:     connection closed
+INFO:     127.0.0.1:55189 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\uvicorn\protocols\websockets\websockets_impl.py", line 244, in run_asgi
+    result = await self.app(self.scope, self.asgi_receive, self.asgi_send)  # type: ignore[func-returns-value]
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\middleware\errors.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 364, in handle
+    await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 97, in app
+    await wrap_app_handling_exceptions(app, session)(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 95, in app
+    await func(session)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\fastapi\routing.py", line 384, in app
+    await dependant.call(**solved_result.values)
+  File "E:\Viet\MMO\remote-device-hub\app.py", line 197, in agent_socket
+    message = await websocket.receive()
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\websockets.py", line 57, in receive
+    raise RuntimeError('Cannot call "receive" once a disconnect message has been received.')
+RuntimeError: Cannot call "receive" once a disconnect message has been received.
+INFO:     connection closed
+INFO:     127.0.0.1:55200 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\uvicorn\protocols\websockets\websockets_impl.py", line 244, in run_asgi
+    result = await self.app(self.scope, self.asgi_receive, self.asgi_send)  # type: ignore[func-returns-value]
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\middleware\errors.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 364, in handle
+    await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 97, in app
+    await wrap_app_handling_exceptions(app, session)(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 95, in app
+    await func(session)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\fastapi\routing.py", line 384, in app
+    await dependant.call(**solved_result.values)
+  File "E:\Viet\MMO\remote-device-hub\app.py", line 197, in agent_socket
+    message = await websocket.receive()
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\websockets.py", line 57, in receive
+    raise RuntimeError('Cannot call "receive" once a disconnect message has been received.')
+RuntimeError: Cannot call "receive" once a disconnect message has been received.
+INFO:     connection closed
+INFO:     127.0.0.1:55212 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\uvicorn\protocols\websockets\websockets_impl.py", line 244, in run_asgi
+    result = await self.app(self.scope, self.asgi_receive, self.asgi_send)  # type: ignore[func-returns-value]
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\middleware\errors.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 364, in handle
+    await self.app(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 97, in app
+    await wrap_app_handling_exceptions(app, session)(scope, receive, send)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\routing.py", line 95, in app
+    await func(session)
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\fastapi\routing.py", line 384, in app
+    await dependant.call(**solved_result.values)
+  File "E:\Viet\MMO\remote-device-hub\app.py", line 197, in agent_socket
+    message = await websocket.receive()
+  File "E:\Viet\MMO\genarate-image\.venv\lib\site-packages\starlette\websockets.py", line 57, in receive
+    raise RuntimeError('Cannot call "receive" once a disconnect message has been received.')
+RuntimeError: Cannot call "receive" once a disconnect message has been received.
+INFO:     connection closed
+INFO:     Started server process [6172]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8040 (Press CTRL+C to quit)
+INFO:     127.0.0.1:51734 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     127.0.0.1:53023 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53023 - "GET /static/style.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62647 - "GET /static/app.js?v=20260824-8 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:64363 - "GET /static/jmuxer.min.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:64363 - "GET /static/android-detect.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62647 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57802 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:57803 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     127.0.0.1:57820 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     127.0.0.1:62809 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:50530 - "GET / HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:65351 - "GET /static/favicon.svg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:50530 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51934 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     127.0.0.1:51937 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:54589 - "POST /api/devices/daffeee92eed/upload?filename=ChatGPT%20Image%2006_56_31%2021%20thg%208%2C%202026%20(1).png HTTP/1.1" 200 OK
+INFO:     Started server process [15924]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8040 (Press CTRL+C to quit)
+INFO:     127.0.0.1:61833 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61839 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:61833 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61833 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56785 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     127.0.0.1:56788 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     127.0.0.1:59535 - "GET /api/devices HTTP/1.1" 200 OK

@@ -1,0 +1,6 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+websockets>=13
+pillow>=10
+mss>=9
+pyautogui>=0.9

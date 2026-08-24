@@ -1,0 +1,26 @@
+INFO:     Started server process [18996]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8030 (Press CTRL+C to quit)
+INFO:     127.0.0.1:57985 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57985 - "GET /static/style.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64846 - "GET /static/app.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64846 - "GET /static/favicon.svg HTTP/1.1" 200 OK
+INFO:     Started server process [14620]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8030 (Press CTRL+C to quit)
+INFO:     127.0.0.1:64855 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59388 - "GET /static/app.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:64855 - "GET /static/style.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:64855 - "GET /static/favicon.svg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:58471 - "POST /api/analyze HTTP/1.1" 502 Bad Gateway
+INFO:     127.0.0.1:50953 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     Started server process [19772]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8030 (Press CTRL+C to quit)
+INFO:     127.0.0.1:65051 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58021 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61044 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58482 - "POST /api/analyze HTTP/1.1" 200 OK

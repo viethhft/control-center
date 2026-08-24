@@ -1,0 +1,19 @@
+{
+  "id": "1787526896-10a851",
+  "title": "giới thiệu sản phẩm",
+  "genre": "Tự động",
+  "intensity": "balanced",
+  "context": "",
+  "source": "Mấy ní yêu nhau đừng có mà tag nhau vào đòi mua cái máy sưởi này cho nhau nữa. mà phải mua cho cả ông bà bố mẹ đi.",
+  "annotated_text": "[normal] Mấy ní yêu nhau đừng có mà tag nhau vào đòi mua cái máy sưởi này cho nhau nữa. mà phải mua cho cả ông bà bố mẹ đi. [pause=400ms]",
+  "segments": [
+    {
+      "index": 1,
+      "preview": "Mấy ní yêu nhau đừng có mà tag nhau vào đòi mua cái máy sưởi này cho nhau nữa. mà phải mua cho cả ôn",
+      "cue": "normal",
+      "pause_ms": 400,
+      "reason": "mô tả ngắn"
+    }
+  ],
+  "created_at": 1787526896.144207
+}

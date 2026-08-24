@@ -1,0 +1,19 @@
+{
+  "id": "1787526799-87b455",
+  "title": "Test",
+  "genre": "Hai huoc",
+  "intensity": "balanced",
+  "context": "",
+  "source": "Co ay bat cuoi khi nghe mot cau chuyen vui.",
+  "annotated_text": "[excited] Co ay bat cuoi khi nghe mot cau chuyen vui. [pause=250ms]",
+  "segments": [
+    {
+      "index": 1,
+      "preview": "Co ay bat cuoi khi nghe mot cau chuyen vui.",
+      "cue": "excited",
+      "pause_ms": 250,
+      "reason": "mô tả ngắn"
+    }
+  ],
+  "created_at": 1787526799.6535716
+}

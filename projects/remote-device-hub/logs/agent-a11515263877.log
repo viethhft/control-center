@@ -1,0 +1,4 @@
+E:\Viet\MMO\remote-device-hub\agent.py:26: DeprecationWarning: mss.mss is deprecated and will be removed in a future release; use mss.MSS instead
+  with mss.mss() as capture:
+E:\Viet\MMO\remote-device-hub\agent.py:34: DeprecationWarning: mss.mss is deprecated and will be removed in a future release; use mss.MSS instead
+  with self.mss_module.mss() as capture:

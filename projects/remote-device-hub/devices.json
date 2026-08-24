@@ -1,0 +1,17 @@
+{
+  "daffeee92eed": {
+    "id": "daffeee92eed",
+    "name": "V2440",
+    "kind": "android",
+    "note": "ADB · 10AF2P1Z9K001YU",
+    "adb_serial": "10AF2P1Z9K001YU",
+    "agent_token": "c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID",
+    "created_at": 1787522934.0413418,
+    "last_seen": 1787542711.6933713,
+    "capabilities": [
+      "screen",
+      "pointer",
+      "keyboard"
+    ]
+  }
+}

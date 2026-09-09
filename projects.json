@@ -76,20 +76,5 @@
       {"id": "control", "name": "Điều khiển từ xa"},
       {"id": "devices", "name": "Quản lý thiết bị"}
     ]
-  },
-  {
-    "id": "money-printer-turbo",
-    "name": "Money Printer Turbo",
-    "description": "Tạo video ngắn tự động từ chủ đề, kịch bản, giọng đọc và phụ đề.",
-    "directory": "projects/money-printer-turbo",
-    "command": [".venv/Scripts/python.exe", "-m", "streamlit", "run", "webui/Main.py", "--server.address=127.0.0.1", "--server.port=8050", "--server.headless=true", "--browser.gatherUsageStats=false"],
-    "command_linux": [".venv/bin/python", "-m", "streamlit", "run", "webui/Main.py", "--server.address=127.0.0.1", "--server.port=8050", "--server.headless=true", "--browser.gatherUsageStats=false"],
-    "url": "http://127.0.0.1:8050",
-    "health_url": "http://127.0.0.1:8050/_stcore/health",
-    "features": [
-      {"id": "script", "name": "Tạo kịch bản"},
-      {"id": "voice", "name": "Giọng đọc và phụ đề"},
-      {"id": "video", "name": "Tạo và tải video"}
-    ]
   }
 ]

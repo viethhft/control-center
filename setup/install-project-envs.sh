@@ -22,6 +22,7 @@ install_env(){
 
 install_env "$ROOT_DIR" ".venv-linux" "Control Center"
 install_env "$PROJECTS_DIR/text-to-speech-app" ".venv-linux" "Text-to-Speech"
+install_env "$PROJECTS_DIR/story-video-studio" ".venv-linux" "Story Video Studio"
 
 # StoryFrame có môi trường CUDA riêng do setup Ubuntu/container tạo. Chỉ tạo
 # fallback khi người dùng chạy installer môi trường độc lập.

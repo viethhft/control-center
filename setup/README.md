@@ -9,7 +9,7 @@ StoryFrame.
 bash setup/setup-container.sh
 ```
 
-Script sẽ cài Control Center, môi trường Python của cả 5 project, Ollama, ComfyUI,
+Script sẽ cài Control Center, môi trường Python của cả 6 project, Ollama, ComfyUI,
 model render và khởi động toàn bộ dịch vụ.
 
 Sau lần cài đầu tiên:
@@ -29,6 +29,7 @@ Các service được tạo:
 
 - `control-center` — cổng 7999
 - `text-to-speech` — cổng 8000
+- `story-video-studio` — cổng 8060
 - `storyframe` — cổng 8010
 - `story-research` — cổng 8020
 - `emotion-markup` — cổng 8030

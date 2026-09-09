@@ -66,6 +66,7 @@ log "Khởi động ComfyUI tại cổng 8188"
 )
 
 start_app "text-to-speech" "$PROJECTS_DIR/text-to-speech-app" ".venv-linux/bin/python" 8000
+start_app "story-video-studio" "$PROJECTS_DIR/story-video-studio" ".venv-linux/bin/python" 8060
 start_app "story-frame" "$PROJECTS_DIR/genarate-image" ".venv-app/bin/python" 8010
 start_app "story-research" "$PROJECTS_DIR/story-research-lab" ".venv-linux/bin/python" 8020
 start_app "emotion-markup" "$PROJECTS_DIR/emotion-markup-studio" ".venv-linux/bin/python" 8030
@@ -83,6 +84,7 @@ log "Khởi động Control Center tại cổng 7999"
 declare -A HEALTH=(
   [control-center]="http://127.0.0.1:7999/"
   [text-to-speech]="http://127.0.0.1:8000/"
+  [story-video-studio]="http://127.0.0.1:8060/api/health"
   [story-frame]="http://127.0.0.1:8010/api/health"
   [story-research]="http://127.0.0.1:8020/api/health"
   [emotion-markup]="http://127.0.0.1:8030/api/health"

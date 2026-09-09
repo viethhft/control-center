@@ -21,13 +21,38 @@ command -v wget >/dev/null || { echo "Thiếu wget" >&2; exit 1; }
 [[ -d "$COMFY_DIR/.git" ]] && git -C "$COMFY_DIR" pull --ff-only
 mkdir -p "$DIFFUSION_DIR" "$ENCODER_DIR" "$VAE_DIR"
 
+valid_safetensors(){
+	local path="$1"
+	[[ -s "$path" ]] || return 1
+	"$COMFY_DIR/.venv/bin/python" - "$path" <<'PY'
+import sys
+from safetensors import safe_open
+
+try:
+		with safe_open(sys.argv[1], framework="pt", device="cpu") as model:
+				next(iter(model.keys()), None)
+except Exception:
+		raise SystemExit(1)
+PY
+}
+
+download_model(){
+	local destination="$1" url="$2"
+	if valid_safetensors "$destination"; then
+		return 0
+	fi
+	rm -f "$destination"
+	wget --continue --output-document="$destination" "$url"
+	valid_safetensors "$destination" || { echo "File model bị hỏng: $destination" >&2; exit 1; }
+}
+
 echo "[1/4] Tải Qwen-Image distilled FP8"
-[[ -s "$DIFFUSION_DIR/$MODEL_NAME" ]] || wget --continue --output-document="$DIFFUSION_DIR/$MODEL_NAME" "$MODEL_URL"
+download_model "$DIFFUSION_DIR/$MODEL_NAME" "$MODEL_URL"
 echo "[2/4] Tải Qwen-Image-Edit-2509 FP8 để khóa nhân vật"
-[[ -s "$DIFFUSION_DIR/$EDIT_MODEL_NAME" ]] || wget --continue --output-document="$DIFFUSION_DIR/$EDIT_MODEL_NAME" "$EDIT_MODEL_URL"
+download_model "$DIFFUSION_DIR/$EDIT_MODEL_NAME" "$EDIT_MODEL_URL"
 echo "[3/4] Tải text encoder và VAE"
-[[ -s "$ENCODER_DIR/$ENCODER_NAME" ]] || wget --continue --output-document="$ENCODER_DIR/$ENCODER_NAME" "$ENCODER_URL"
-[[ -s "$VAE_DIR/$VAE_NAME" ]] || wget --continue --output-document="$VAE_DIR/$VAE_NAME" "$VAE_URL"
+download_model "$ENCODER_DIR/$ENCODER_NAME" "$ENCODER_URL"
+download_model "$VAE_DIR/$VAE_NAME" "$VAE_URL"
 
 echo "[4/4] Cập nhật cấu hình StoryFrame"
 touch "$APP_DIR/.env"

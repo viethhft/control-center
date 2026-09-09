@@ -65,10 +65,7 @@ CC=/usr/bin/gcc CXX=/usr/bin/g++ "$COMFY_DIR/.venv/bin/python" -c \
 
 log "Tải Qwen-Image, Qwen-Image-Edit-2509, text encoder và VAE"
 mkdir -p "$COMFY_DIR/models/diffusion_models" "$COMFY_DIR/models/text_encoders" "$COMFY_DIR/models/vae"
-[[ -s "$COMFY_DIR/models/diffusion_models/$QWEN_MODEL" ]] || wget --continue --output-document="$COMFY_DIR/models/diffusion_models/$QWEN_MODEL" "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/non_official/diffusion_models/$QWEN_MODEL"
-[[ -s "$COMFY_DIR/models/diffusion_models/$QWEN_EDIT_MODEL" ]] || wget --continue --output-document="$COMFY_DIR/models/diffusion_models/$QWEN_EDIT_MODEL" "https://huggingface.co/Comfy-Org/Qwen-Image-Edit_ComfyUI/resolve/main/split_files/diffusion_models/$QWEN_EDIT_MODEL"
-[[ -s "$COMFY_DIR/models/text_encoders/$QWEN_ENCODER" ]] || wget --continue --output-document="$COMFY_DIR/models/text_encoders/$QWEN_ENCODER" "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/$QWEN_ENCODER"
-[[ -s "$COMFY_DIR/models/vae/$QWEN_VAE" ]] || wget --continue --output-document="$COMFY_DIR/models/vae/$QWEN_VAE" "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/$QWEN_VAE"
+COMFY_DIR="$COMFY_DIR" bash "$SCRIPT_DIR/install-render-models.sh"
 
 log "Cài StoryFrame"
 python3 -m venv "$APP_DIR/.venv-app"

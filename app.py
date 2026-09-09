@@ -246,8 +246,11 @@ def project_process_matches(project_id: str, pid: int) -> bool:
     try:
         expected = (ROOT / project(project_id)["directory"]).resolve()
         actual = Path(f"/proc/{pid}/cwd").resolve()
-        command = Path(f"/proc/{pid}/cmdline").read_bytes().replace(b"\0", b" ")
-        return actual == expected and b"uvicorn" in command and b"app:app" in command
+        command = Path(f"/proc/{pid}/cmdline").read_bytes().split(b"\0")
+        # Match the configured arguments, including the entry point and port.
+        # Streamlit projects must also be recoverable after a manager restart.
+        expected_args = [os.fsencode(arg) for arg in project_command(project(project_id))[1:]]
+        return actual == expected and command[1:1 + len(expected_args)] == expected_args
     except (OSError, ValueError):
         return False
 

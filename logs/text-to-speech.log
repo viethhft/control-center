@@ -7135,3 +7135,380 @@ INFO:     127.0.0.1:65263 - "POST /api/tts HTTP/1.1" 200 OK
   chunk 27/27 streamed (133.9s elapsed)
 All 27 chunks done in 133.9s
 INFO:     127.0.0.1:64407 - "GET /api/download/afd682884c474170bcd4c6af24acd719 HTTP/1.1" 200 OK
+INFO:     Started server process [5112]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:64391 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64391 - "GET /static/css/style.css?v=20260824-3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63111 - "GET /static/js/app.js?v=20260824-4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60597 - "GET /static/css/expression.css?v=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64219 - "GET /static/css/cues.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63111 - "GET /api/voices HTTP/1.1" 200 OK
+TTS request: 24,199 chars / ~4,969 words -> 17 chunks
+Streaming TTS: 17 chunks, voice=vieneu-ngoc-linh, concurrency=2
+INFO:     127.0.0.1:50075 - "POST /api/tts HTTP/1.1" 200 OK
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading VieNeu v3 Turbo ONNX CPU (int8)...
+  [VieNeu] chunk 0 completed
+  chunk 1/17 streamed (119.3s elapsed)
+  [VieNeu] chunk 1 completed
+  chunk 2/17 streamed (226.8s elapsed)
+  [VieNeu] chunk 2 completed
+  chunk 3/17 streamed (334.1s elapsed)
+  [VieNeu] chunk 3 completed
+  chunk 4/17 streamed (433.7s elapsed)
+  [VieNeu] chunk 4 completed
+  chunk 5/17 streamed (536.9s elapsed)
+  [VieNeu] chunk 5 completed
+  chunk 6/17 streamed (617.5s elapsed)
+  [VieNeu] chunk 6 completed
+  chunk 7/17 streamed (692.1s elapsed)
+  [VieNeu] chunk 7 completed
+  chunk 8/17 streamed (763.2s elapsed)
+  [VieNeu] chunk 8 completed
+  chunk 9/17 streamed (838.5s elapsed)
+  [VieNeu] chunk 9 completed
+  chunk 10/17 streamed (910.3s elapsed)
+  [VieNeu] chunk 10 completed
+  chunk 11/17 streamed (983.4s elapsed)
+  [VieNeu] chunk 11 completed
+  chunk 12/17 streamed (1057.6s elapsed)
+  [VieNeu] chunk 12 completed
+  chunk 13/17 streamed (1126.5s elapsed)
+  [VieNeu] chunk 13 completed
+  chunk 14/17 streamed (1196.7s elapsed)
+  [VieNeu] chunk 14 completed
+  chunk 15/17 streamed (1276.0s elapsed)
+  [VieNeu] chunk 15 completed
+  chunk 16/17 streamed (1348.6s elapsed)
+  [VieNeu] chunk 16 completed
+  chunk 17/17 streamed (1395.1s elapsed)
+All 17 chunks done in 1395.1s
+INFO:     127.0.0.1:59447 - "GET /static/favicon.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52631 - "GET /api/download/54b110664fa143528e18a9a806bc3448 HTTP/1.1" 200 OK
+INFO:     Started server process [17968]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:63660 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63660 - "GET /static/css/style.css?v=20260824-3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57977 - "GET /static/js/app.js?v=20260824-4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56200 - "GET /static/css/expression.css?v=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63298 - "GET /static/css/cues.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57977 - "GET /api/voices HTTP/1.1" 200 OK
+TTS request: 40,430 chars / ~8,451 words -> 29 chunks
+Streaming TTS: 29 chunks, voice=vieneu-ngoc-linh, concurrency=2
+INFO:     127.0.0.1:65335 - "POST /api/tts HTTP/1.1" 200 OK
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading VieNeu v3 Turbo ONNX CPU (int8)...
+  [VieNeu] chunk 0 completed
+  chunk 1/29 streamed (95.1s elapsed)
+  [VieNeu] chunk 1 completed
+  chunk 2/29 streamed (181.0s elapsed)
+  [VieNeu] chunk 2 completed
+  chunk 3/29 streamed (264.3s elapsed)
+  [VieNeu] chunk 3 completed
+  chunk 4/29 streamed (354.2s elapsed)
+  [VieNeu] chunk 4 completed
+  chunk 5/29 streamed (441.0s elapsed)
+  [VieNeu] chunk 5 completed
+  chunk 6/29 streamed (533.9s elapsed)
+  [VieNeu] chunk 6 completed
+  chunk 7/29 streamed (606.7s elapsed)
+  [VieNeu] chunk 7 completed
+  chunk 8/29 streamed (687.6s elapsed)
+  [VieNeu] chunk 8 completed
+  chunk 9/29 streamed (769.2s elapsed)
+  [VieNeu] chunk 9 completed
+  chunk 10/29 streamed (831.0s elapsed)
+  [VieNeu] chunk 10 completed
+  chunk 11/29 streamed (883.9s elapsed)
+  [VieNeu] chunk 11 completed
+  chunk 12/29 streamed (940.5s elapsed)
+  [VieNeu] chunk 12 completed
+  chunk 13/29 streamed (1017.0s elapsed)
+  [VieNeu] chunk 13 completed
+  chunk 14/29 streamed (1100.3s elapsed)
+  [VieNeu] chunk 14 completed
+  chunk 15/29 streamed (1175.3s elapsed)
+  [VieNeu] chunk 15 completed
+  chunk 16/29 streamed (1255.9s elapsed)
+  [VieNeu] chunk 16 completed
+  chunk 17/29 streamed (1339.4s elapsed)
+  [VieNeu] chunk 17 completed
+  chunk 18/29 streamed (1423.4s elapsed)
+  [VieNeu] chunk 18 completed
+  chunk 19/29 streamed (1505.9s elapsed)
+  [VieNeu] chunk 19 completed
+  chunk 20/29 streamed (1580.9s elapsed)
+  [VieNeu] chunk 20 completed
+  chunk 21/29 streamed (1640.3s elapsed)
+  [VieNeu] chunk 21 completed
+  chunk 22/29 streamed (1726.9s elapsed)
+  [VieNeu] chunk 22 completed
+  chunk 23/29 streamed (1795.9s elapsed)
+  [VieNeu] chunk 23 completed
+  chunk 24/29 streamed (1844.3s elapsed)
+  [VieNeu] chunk 24 completed
+  chunk 25/29 streamed (1888.9s elapsed)
+  [VieNeu] chunk 25 completed
+  chunk 26/29 streamed (1920.6s elapsed)
+  [VieNeu] chunk 26 completed
+  chunk 27/29 streamed (1981.5s elapsed)
+  [VieNeu] chunk 27 completed
+  chunk 28/29 streamed (2060.4s elapsed)
+  [VieNeu] chunk 28 completed
+  chunk 29/29 streamed (2066.3s elapsed)
+All 29 chunks done in 2066.3s
+INFO:     127.0.0.1:62659 - "GET /static/favicon.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53997 - "GET /api/download/1ae707be3d5549cca470e8326927d9b8 HTTP/1.1" 200 OK
+INFO:     Started server process [8736]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:64042 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60876 - "GET /static/css/cues.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60490 - "GET /static/js/app.js?v=20260824-4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57275 - "GET /static/css/expression.css?v=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64042 - "GET /static/css/style.css?v=20260824-3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60490 - "GET /api/voices HTTP/1.1" 200 OK
+TTS request: 31,122 chars / ~6,343 words -> 22 chunks
+Streaming TTS: 22 chunks, voice=vieneu-ngoc-linh, concurrency=2
+INFO:     127.0.0.1:60763 - "POST /api/tts HTTP/1.1" 200 OK
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading VieNeu v3 Turbo ONNX CPU (int8)...
+  [VieNeu] chunk 0 completed
+  chunk 1/22 streamed (69.3s elapsed)
+  [VieNeu] chunk 1 completed
+  chunk 2/22 streamed (144.2s elapsed)
+  [VieNeu] chunk 2 completed
+  chunk 3/22 streamed (185.6s elapsed)
+  [VieNeu] chunk 3 completed
+  chunk 4/22 streamed (237.2s elapsed)
+  [VieNeu] chunk 4 completed
+  chunk 5/22 streamed (293.1s elapsed)
+  [VieNeu] chunk 5 completed
+  chunk 6/22 streamed (334.2s elapsed)
+  [VieNeu] chunk 6 completed
+  chunk 7/22 streamed (385.8s elapsed)
+  [VieNeu] chunk 7 completed
+  chunk 8/22 streamed (447.5s elapsed)
+  [VieNeu] chunk 8 completed
+  chunk 9/22 streamed (494.9s elapsed)
+  [VieNeu] chunk 9 completed
+  chunk 10/22 streamed (536.1s elapsed)
+  [VieNeu] chunk 10 completed
+  chunk 11/22 streamed (581.8s elapsed)
+  [VieNeu] chunk 11 completed
+  chunk 12/22 streamed (622.7s elapsed)
+  [VieNeu] chunk 12 completed
+  chunk 13/22 streamed (663.2s elapsed)
+  [VieNeu] chunk 13 completed
+  chunk 14/22 streamed (706.7s elapsed)
+  [VieNeu] chunk 14 completed
+  chunk 15/22 streamed (749.2s elapsed)
+  [VieNeu] chunk 15 completed
+  chunk 16/22 streamed (790.3s elapsed)
+  [VieNeu] chunk 16 completed
+  chunk 17/22 streamed (829.4s elapsed)
+  [VieNeu] chunk 17 completed
+  chunk 18/22 streamed (872.3s elapsed)
+  [VieNeu] chunk 18 completed
+  chunk 19/22 streamed (915.3s elapsed)
+  [VieNeu] chunk 19 completed
+  chunk 20/22 streamed (958.2s elapsed)
+  [VieNeu] chunk 20 completed
+  chunk 21/22 streamed (1002.2s elapsed)
+  [VieNeu] chunk 21 completed
+  chunk 22/22 streamed (1025.2s elapsed)
+All 22 chunks done in 1025.2s
+INFO:     127.0.0.1:58302 - "GET /static/favicon.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52696 - "GET /api/download/1a3256e0673f4ad89891e97797f5bd85 HTTP/1.1" 200 OK
+INFO:     Started server process [24964]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:59280 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59280 - "GET /static/css/style.css?v=20260824-3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57038 - "GET /static/js/app.js?v=20260824-4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49676 - "GET /static/css/cues.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59523 - "GET /static/css/expression.css?v=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59523 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59523 - "GET /static/favicon.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50941 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50941 - "GET /static/css/style.css?v=20260824-3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55252 - "GET /static/css/expression.css?v=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51612 - "GET /static/css/cues.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59560 - "GET /static/js/app.js?v=20260908-voice-clone HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59560 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59560 - "GET /static/favicon.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63202 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63202 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63204 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63205 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58303 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58303 - "GET /static/css/style.css?v=20260824-3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59898 - "GET /static/css/expression.css?v=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56380 - "GET /static/css/cues.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62703 - "GET /static/js/app.js?v=20260908-voice-clone HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62703 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62703 - "GET /static/favicon.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51677 - "POST /api/custom-voices HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51677 - "POST /api/custom-voices HTTP/1.1" 404 Not Found
+INFO:     Started server process [24728]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:49732 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49732 - "GET /static/css/style.css?v=20260824-3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59693 - "GET /static/css/cues.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51783 - "GET /static/css/expression.css?v=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64078 - "GET /static/js/app.js?v=20260908-voice-clone HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64078 - "GET /api/voices HTTP/1.1" 200 OK
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+E:\Viet\MMO\control-center\projects\text-to-speech-app\.venv\lib\site-packages\huggingface_hub\file_download.py:141: UserWarning: `huggingface_hub` cache-system uses symlinks by default to efficiently store duplicated files but your machine does not support them in C:\Users\ADMIN\.cache\huggingface\hub\models--pnnbao-ump--VieNeu-TTS-v3-Turbo. Caching files will still work but in a degraded version that might require more space on your disk. This warning can be disabled by setting the `HF_HUB_DISABLE_SYMLINKS_WARNING` environment variable. For more details, see https://huggingface.co/docs/huggingface_hub/how-to-cache#limitations.
+To support symlinks on Windows, you either need to activate Developer Mode or to run Python as an administrator. In order to activate developer mode, see this article: https://docs.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development
+  warnings.warn(message)
+Loading VieNeu v3 Turbo ONNX CPU (int8)...
+INFO:     127.0.0.1:52202 - "POST /api/custom-voices HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52202 - "GET /api/voices HTTP/1.1" 200 OK
+TTS request: 65 chars / ~15 words -> 1 chunks
+Streaming TTS: 1 chunks, voice=custom:74b8d9c67c814c298e11ac666e08c02b, concurrency=2
+INFO:     127.0.0.1:60241 - "POST /api/tts HTTP/1.1" 200 OK
+  [VieNeu] chunk 0 completed
+  chunk 1/1 streamed (7.3s elapsed)
+All 1 chunks done in 7.3s
+TTS request: 65 chars / ~15 words -> 1 chunks
+Streaming TTS: 1 chunks, voice=custom:74b8d9c67c814c298e11ac666e08c02b, concurrency=2
+INFO:     127.0.0.1:58539 - "POST /api/tts HTTP/1.1" 200 OK
+  [VieNeu cache] chunk 0
+  chunk 1/1 streamed (0.1s elapsed)
+All 1 chunks done in 0.1s
+INFO:     127.0.0.1:64576 - "DELETE /api/custom-voices/custom%3A74b8d9c67c814c298e11ac666e08c02b HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64576 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56040 - "POST /api/custom-voices HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56040 - "GET /api/voices HTTP/1.1" 200 OK
+TTS request: 65 chars / ~15 words -> 1 chunks
+Streaming TTS: 1 chunks, voice=custom:17049487702840bdb0373cb1932a1d63, concurrency=2
+INFO:     127.0.0.1:56040 - "POST /api/tts HTTP/1.1" 200 OK
+  [VieNeu] chunk 0 completed
+  chunk 1/1 streamed (7.9s elapsed)
+All 1 chunks done in 7.9s
+TTS request: 65 chars / ~15 words -> 1 chunks
+Streaming TTS: 1 chunks, voice=custom:17049487702840bdb0373cb1932a1d63, concurrency=2
+INFO:     127.0.0.1:61655 - "POST /api/tts HTTP/1.1" 200 OK
+  [VieNeu cache] chunk 0
+  chunk 1/1 streamed (0.3s elapsed)
+All 1 chunks done in 0.3s
+TTS request: 65 chars / ~15 words -> 1 chunks
+Streaming TTS: 1 chunks, voice=custom:17049487702840bdb0373cb1932a1d63, concurrency=2
+INFO:     127.0.0.1:57255 - "POST /api/tts HTTP/1.1" 200 OK
+  [VieNeu cache] chunk 0
+  chunk 1/1 streamed (0.3s elapsed)
+All 1 chunks done in 0.3s
+TTS request: 65 chars / ~15 words -> 1 chunks
+Streaming TTS: 1 chunks, voice=custom:17049487702840bdb0373cb1932a1d63, concurrency=2
+INFO:     127.0.0.1:53794 - "POST /api/tts HTTP/1.1" 200 OK
+  [VieNeu cache] chunk 0
+  chunk 1/1 streamed (0.1s elapsed)
+All 1 chunks done in 0.1s
+INFO:     127.0.0.1:64989 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64989 - "GET /static/css/style.css?v=20260824-3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61740 - "GET /static/css/expression.css?v=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54981 - "GET /static/css/cues.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65402 - "GET /static/js/app.js?v=20260908-voice-profile-samples HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65402 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59323 - "POST /api/custom-voices/custom%3A17049487702840bdb0373cb1932a1d63/samples HTTP/1.1" 404 Not Found
+INFO:     Started server process [1620]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading VieNeu v3 Turbo ONNX CPU (int8)...
+INFO:     127.0.0.1:58827 - "POST /api/custom-voices/custom%3A17049487702840bdb0373cb1932a1d63/samples HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58827 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59898 - "POST /api/parse-dialogue/ai HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59898 - "GET /api/parse-dialogue/ai/1a3b81afd74e43d6b48ef9fe627bcbaa HTTP/1.1" 200 OK
+Drama TTS: 1125 lines -> 1120 voice groups
+INFO:     127.0.0.1:59898 - "POST /api/tts/drama HTTP/1.1" 200 OK
+  [VieNeu] chunk 0 completed
+  [VieNeu] chunk 1 completed
+  [VieNeu] chunk 2 completed
+  [VieNeu] chunk 3 completed
+  [VieNeu] chunk 4 completed
+  [VieNeu] chunk 5 completed
+  [VieNeu] chunk 6 completed
+  [VieNeu] chunk 7 completed
+  [VieNeu] chunk 8 completed
+  [VieNeu] chunk 9 completed
+  [VieNeu] chunk 10 completed
+  [VieNeu] chunk 11 completed
+  [VieNeu] chunk 12 completed
+  [VieNeu] chunk 13 completed
+  [VieNeu] chunk 14 completed
+  [VieNeu] chunk 15 completed
+  [VieNeu] chunk 16 completed
+  [VieNeu] chunk 17 completed
+  [VieNeu] chunk 18 completed
+  [VieNeu] chunk 19 completed
+  [VieNeu] chunk 20 completed
+  [VieNeu] chunk 21 completed
+  [VieNeu] chunk 22 completed
+INFO:     127.0.0.1:50136 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50136 - "GET /static/css/style.css?v=20260824-3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58051 - "GET /static/css/expression.css?v=3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49782 - "GET /static/js/app.js?v=20260908-voice-profile-samples HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60083 - "GET /static/css/cues.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60083 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     Started server process [22360]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+TTS request: 27,666 chars / ~5,594 words -> 20 chunks
+Streaming TTS: 20 chunks, voice=custom:17049487702840bdb0373cb1932a1d63, concurrency=2
+INFO:     127.0.0.1:58858 - "POST /api/tts HTTP/1.1" 200 OK
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading VieNeu v3 Turbo ONNX CPU (int8)...
+  [VieNeu] chunk 0 completed
+  chunk 1/20 streamed (224.9s elapsed)
+  [VieNeu] chunk 1 completed
+  chunk 2/20 streamed (384.7s elapsed)
+  [VieNeu] chunk 2 completed
+  chunk 3/20 streamed (551.6s elapsed)
+  [VieNeu] chunk 3 completed
+  chunk 4/20 streamed (714.9s elapsed)
+  [VieNeu] chunk 4 completed
+  chunk 5/20 streamed (887.1s elapsed)
+  [VieNeu] chunk 5 completed
+  chunk 6/20 streamed (1040.6s elapsed)
+  [VieNeu] chunk 6 completed
+  chunk 7/20 streamed (1112.8s elapsed)
+  [VieNeu] chunk 7 completed
+  chunk 8/20 streamed (1193.0s elapsed)
+  [VieNeu] chunk 8 completed
+  chunk 9/20 streamed (1293.3s elapsed)
+  [VieNeu] chunk 9 completed
+  chunk 10/20 streamed (1383.8s elapsed)
+  [VieNeu] chunk 10 completed
+  chunk 11/20 streamed (1448.4s elapsed)
+  [VieNeu] chunk 11 completed
+  chunk 12/20 streamed (1505.0s elapsed)
+  [VieNeu] chunk 12 completed
+  chunk 13/20 streamed (1565.3s elapsed)
+  [VieNeu] chunk 13 completed
+  chunk 14/20 streamed (1622.9s elapsed)
+  [VieNeu] chunk 14 completed
+  chunk 15/20 streamed (1677.5s elapsed)
+  [VieNeu] chunk 15 completed
+  chunk 16/20 streamed (1730.6s elapsed)
+  [VieNeu] chunk 16 completed
+  chunk 17/20 streamed (1783.3s elapsed)
+  [VieNeu] chunk 17 completed
+  chunk 18/20 streamed (1841.8s elapsed)
+  [VieNeu] chunk 18 completed
+  chunk 19/20 streamed (1897.7s elapsed)
+  [VieNeu] chunk 19 completed
+  chunk 20/20 streamed (1901.3s elapsed)
+All 20 chunks done in 1901.3s
+INFO:     127.0.0.1:57640 - "GET /api/download/05a3e8967ea24857b0f71b5e98800ad2 HTTP/1.1" 200 OK

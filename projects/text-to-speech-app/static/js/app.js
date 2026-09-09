@@ -9,6 +9,7 @@ const state = {
     currentAudioUrl: null,
     currentBlob: null,
     isLoading: false,
+    refiningVoiceId: null,
     history: [],
     dramaSegments: [],
     filter: {
@@ -128,6 +129,19 @@ function initElements() {
         voiceListContainer: document.getElementById('voiceListContainer'),
         voiceCountBadge: document.getElementById('voiceCountBadge'),
         selectedVoiceDisplay: document.getElementById('selectedVoiceDisplay'),
+        toggleCustomVoiceForm: document.getElementById('toggleCustomVoiceForm'),
+        customVoicePanelTitle: document.getElementById('customVoicePanelTitle'),
+        customVoicePanelHint: document.getElementById('customVoicePanelHint'),
+        customVoiceForm: document.getElementById('customVoiceForm'),
+        customVoiceName: document.getElementById('customVoiceName'),
+        customVoiceGender: document.getElementById('customVoiceGender'),
+        customVoiceFiles: document.getElementById('customVoiceFiles'),
+        customVoiceConsent: document.getElementById('customVoiceConsent'),
+        customVoiceFileSummary: document.getElementById('customVoiceFileSummary'),
+        createCustomVoiceBtn: document.getElementById('createCustomVoiceBtn'),
+        createCustomVoiceBtnText: document.getElementById('createCustomVoiceBtnText'),
+        customVoiceSpinner: document.getElementById('customVoiceSpinner'),
+        customVoiceStatus: document.getElementById('customVoiceStatus'),
         
         loadStorySampleBtn: document.getElementById('loadStorySampleBtn'),
         dramaNarratorVoice: document.getElementById('dramaNarratorVoice'),
@@ -306,6 +320,24 @@ function initEventListeners() {
             renderVoiceList();
         });
     }
+    elements.toggleCustomVoiceForm?.addEventListener('click', () => {
+        const opening = elements.customVoiceForm.classList.contains('hidden');
+        if (!opening) resetCustomVoiceFormMode();
+        elements.customVoiceForm.classList.toggle('hidden', !opening);
+        updateCustomVoiceFormMode();
+        if (opening) elements.customVoiceName?.focus();
+    });
+    elements.customVoiceFiles?.addEventListener('change', () => {
+        const files = Array.from(elements.customVoiceFiles.files || []);
+        if (!files.length) {
+            elements.customVoiceFileSummary.classList.add('hidden');
+            elements.customVoiceFileSummary.textContent = '';
+            return;
+        }
+        elements.customVoiceFileSummary.classList.remove('hidden');
+        elements.customVoiceFileSummary.textContent = `${files.length} file: ${files.map(file => file.name).join(', ')}`;
+    });
+    elements.customVoiceForm?.addEventListener('submit', handleCreateCustomVoice);
     if (elements.categoryTabs) {
         elements.categoryTabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -457,8 +489,165 @@ function resetSettings() {
     updateTextCounters();
 }
 
-async function loadVoices() {
+function updateCustomVoiceFormMode() {
+    const refiningVoice = state.voices.find(voice => voice.id === state.refiningVoiceId && voice.isCustom);
+    const isOpen = !elements.customVoiceForm?.classList.contains('hidden');
+    if (state.refiningVoiceId && !refiningVoice) state.refiningVoiceId = null;
+    const isRefining = Boolean(refiningVoice);
+
+    if (elements.customVoicePanelTitle) {
+        elements.customVoicePanelTitle.textContent = isRefining
+            ? `Bổ sung mẫu cho “${refiningVoice.name}”`
+            : 'Tạo giọng của tôi';
+    }
+    if (elements.customVoicePanelHint) {
+        elements.customVoicePanelHint.textContent = isRefining
+            ? `Profile hiện có ${refiningVoice.sampleCount || 1} mẫu. File lệch người nói sẽ tự bị loại khỏi phần tổng hợp.`
+            : 'Tạo từ 1–8 mẫu hoặc bổ sung dần để profile ổn định hơn.';
+    }
+    if (elements.customVoiceName) elements.customVoiceName.disabled = isRefining;
+    if (elements.customVoiceGender) elements.customVoiceGender.disabled = isRefining;
+    if (elements.createCustomVoiceBtnText && !elements.createCustomVoiceBtn?.disabled) {
+        elements.createCustomVoiceBtnText.textContent = isRefining
+            ? 'Phân tích và cập nhật profile'
+            : 'Phân tích và tạo giọng';
+    }
+    if (elements.toggleCustomVoiceForm) {
+        elements.toggleCustomVoiceForm.innerHTML = isOpen
+            ? '<i class="fa-solid fa-xmark mr-1"></i> Đóng'
+            : '<i class="fa-solid fa-plus mr-1"></i> Thêm giọng';
+    }
+}
+
+function resetCustomVoiceFormMode(clearStatus = true) {
+    state.refiningVoiceId = null;
+    elements.customVoiceForm?.reset();
+    elements.customVoiceFileSummary?.classList.add('hidden');
+    if (elements.customVoiceFileSummary) elements.customVoiceFileSummary.textContent = '';
+    if (clearStatus) {
+        elements.customVoiceStatus?.classList.add('hidden');
+        if (elements.customVoiceStatus) elements.customVoiceStatus.textContent = '';
+    }
+    updateCustomVoiceFormMode();
+}
+
+function setCustomVoiceLoading(loading) {
+    if (!elements.createCustomVoiceBtn) return;
+    elements.createCustomVoiceBtn.disabled = loading;
+    elements.customVoiceSpinner?.classList.toggle('hidden', !loading);
+    elements.createCustomVoiceBtnText.textContent = loading
+        ? (state.refiningVoiceId ? 'Đang tổng hợp lại profile...' : 'Đang trích xuất giọng mẫu...')
+        : (state.refiningVoiceId ? 'Phân tích và cập nhật profile' : 'Phân tích và tạo giọng');
+}
+
+async function handleCreateCustomVoice(event) {
+    event.preventDefault();
+    const files = Array.from(elements.customVoiceFiles?.files || []);
+    const name = elements.customVoiceName?.value.trim() || '';
+    const refinementVoiceId = state.refiningVoiceId;
+    if ((!refinementVoiceId && !name) || !files.length || !elements.customVoiceConsent?.checked) {
+        const message = refinementVoiceId
+            ? 'Hãy chọn file mẫu và xác nhận quyền sử dụng giọng.'
+            : 'Hãy nhập tên, chọn file mẫu và xác nhận quyền sử dụng giọng.';
+        showNoticeModal('warning', 'Thiếu thông tin', message);
+        return;
+    }
+    if (files.length > 8) {
+        showNoticeModal('warning', 'Quá nhiều file', 'Mỗi lần chỉ tải tối đa 8 file giọng mẫu.');
+        return;
+    }
+
+    const formData = new FormData();
+    if (!refinementVoiceId) {
+        formData.append('name', name);
+        formData.append('gender', elements.customVoiceGender?.value || 'Unknown');
+    }
+    formData.append('consent', 'true');
+    files.forEach(file => formData.append('files', file, file.name));
+    setCustomVoiceLoading(true);
+    elements.customVoiceStatus.classList.remove('hidden');
+    elements.customVoiceStatus.textContent = refinementVoiceId
+        ? 'VieNeu đang đối chiếu các mẫu và tổng hợp lại đặc trưng người nói...'
+        : 'VieNeu đang phân tích mẫu. Lần đầu có thể lâu hơn vì cần tải bộ mã hóa giọng...';
+
     try {
+        const endpoint = refinementVoiceId
+            ? `/api/custom-voices/${encodeURIComponent(refinementVoiceId)}/samples`
+            : '/api/custom-voices';
+        const response = await fetch(endpoint, {method: 'POST', body: formData});
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(formatErrorDetail(data));
+        const rejectedText = data.rejectedFiles?.length
+            ? `\n${data.rejectedFiles.length} file không đạt yêu cầu đã được bỏ qua.`
+            : '';
+        elements.customVoiceStatus.textContent = refinementVoiceId
+            ? `Đã thêm ${data.acceptedFiles} mẫu. Profile đang tổng hợp ${data.usedSamples}/${data.totalSamples} mẫu; mẫu đại diện: ${data.selectedSample}.${rejectedText}`
+            : `Đã tạo “${data.voice.name}” từ ${data.voice.usedSampleCount}/${data.voice.sampleCount} mẫu; mẫu đại diện: ${data.selectedSample}.${rejectedText}`;
+        elements.customVoiceForm.reset();
+        elements.customVoiceFileSummary.classList.add('hidden');
+        elements.customVoiceFileSummary.textContent = '';
+        await loadVoices(data.voice.id);
+        if (refinementVoiceId) {
+            state.refiningVoiceId = null;
+            updateCustomVoiceFormMode();
+            showNoticeModal('success', 'Đã cập nhật profile', `Giọng “${data.voice.name}” đã được tổng hợp lại từ ${data.usedSamples}/${data.totalSamples} mẫu hợp lệ.`);
+        } else {
+            showNoticeModal('success', 'Đã tạo giọng mới', `Giọng “${data.voice.name}” đã sẵn sàng cho đọc thường và phân vai.`);
+        }
+    } catch (error) {
+        elements.customVoiceStatus.textContent = error.message;
+        showNoticeModal('error', refinementVoiceId ? 'Không thể cập nhật profile' : 'Không thể tạo giọng', error.message);
+    } finally {
+        setCustomVoiceLoading(false);
+    }
+}
+
+window.refineCustomVoice = function(voiceId) {
+    const voice = state.voices.find(item => item.id === voiceId && item.isCustom);
+    if (!voice) return;
+    resetCustomVoiceFormMode();
+    state.refiningVoiceId = voiceId;
+    elements.customVoiceName.value = voice.name;
+    elements.customVoiceGender.value = voice.gender || 'Unknown';
+    elements.customVoiceForm.classList.remove('hidden');
+    elements.customVoiceStatus.classList.remove('hidden');
+    elements.customVoiceStatus.textContent = `Chọn thêm 1–8 đoạn chỉ có giọng “${voice.name}”. Có thể bổ sung dần, tối đa 24 mẫu/profile.`;
+    updateCustomVoiceFormMode();
+    elements.customVoiceFiles?.focus();
+    elements.customVoiceForm?.scrollIntoView({behavior: 'smooth', block: 'center'});
+};
+
+window.deleteCustomVoice = async function(voiceId) {
+    const voice = state.voices.find(item => item.id === voiceId);
+    if (!voice?.isCustom) return;
+    const confirmed = await showConfirmModal(
+        'Xóa giọng tùy chỉnh?',
+        `Giọng “${voice.name}” và file mẫu đã lưu sẽ bị xóa khỏi máy.`
+    );
+    if (!confirmed) return;
+    try {
+        const response = await fetch(`/api/custom-voices/${encodeURIComponent(voiceId)}`, {method: 'DELETE'});
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(formatErrorDetail(data));
+        if (state.selectedVoice?.id === voiceId) {
+            state.selectedVoice = null;
+            localStorage.removeItem('tts_selected_voice');
+        }
+        if (state.refiningVoiceId === voiceId) resetCustomVoiceFormMode();
+        state.dramaSegments.forEach(segment => {
+            if (segment.voice === voiceId) segment.voice = 'vieneu-ngoc-linh';
+        });
+        await loadVoices();
+        if (state.dramaSegments.length) renderDramaSegments();
+        showNoticeModal('success', 'Đã xóa giọng', `Đã xóa “${voice.name}” và dữ liệu mẫu liên quan.`);
+    } catch (error) {
+        showNoticeModal('error', 'Không thể xóa giọng', error.message);
+    }
+};
+
+async function loadVoices(preferredVoiceId = null) {
+    try {
+        const previousVoiceId = preferredVoiceId || state.selectedVoice?.id || localStorage.getItem('tts_selected_voice');
         const res = await fetch('/api/voices');
         if (!res.ok) throw new Error('Không thể tải danh sách giọng đọc');
         const data = await res.json();
@@ -470,7 +659,9 @@ async function loadVoices() {
         
         populateDramaVoiceOptions();
 
-        const defaultVoice = state.voices.find(v => v.id === 'vieneu-ngoc-linh') || state.voices[0];
+        const defaultVoice = state.voices.find(v => v.id === previousVoiceId)
+            || state.voices.find(v => v.id === 'vieneu-ngoc-linh')
+            || state.voices[0];
         if (defaultVoice) selectVoice(defaultVoice);
         renderVoiceList();
     } catch (err) {
@@ -483,23 +674,26 @@ async function loadVoices() {
 function populateDramaVoiceOptions() {
     const vnVoices = state.voices.filter(v => v.isVietnamese);
     const otherVoices = state.voices.filter(v => !v.isVietnamese);
+    const currentNarrator = elements.dramaNarratorVoice?.value || 'vieneu-ngoc-linh';
+    const currentMale = elements.dramaMaleVoice?.value || 'vieneu-thanh-binh';
+    const currentFemale = elements.dramaFemaleVoice?.value || 'vieneu-ngoc-linh';
 
     const generateOptionsHtml = (selectedId) => {
         let html = '<optgroup label="🇻🇳 Tiếng Việt">';
         vnVoices.forEach(v => {
-            html += `<option value="${v.id}" ${v.id === selectedId ? 'selected' : ''}>${v.flag} ${v.displayName}</option>`;
+            html += `<option value="${v.id}" ${v.id === selectedId ? 'selected' : ''}>${escapeHtml(v.flag || '🇻🇳')} ${escapeHtml(v.displayName)}</option>`;
         });
         html += '</optgroup><optgroup label="🌐 Quốc tế (Chuẩn hóa)">';
         otherVoices.slice(0, 20).forEach(v => {
-            html += `<option value="${v.id}" ${v.id === selectedId ? 'selected' : ''}>${v.flag} ${v.displayName} (${v.languageName})</option>`;
+            html += `<option value="${v.id}" ${v.id === selectedId ? 'selected' : ''}>${escapeHtml(v.flag || '🌐')} ${escapeHtml(v.displayName)} (${escapeHtml(v.languageName)})</option>`;
         });
         html += '</optgroup>';
         return html;
     };
 
-    if (elements.dramaNarratorVoice) elements.dramaNarratorVoice.innerHTML = generateOptionsHtml('vieneu-ngoc-linh');
-    if (elements.dramaMaleVoice) elements.dramaMaleVoice.innerHTML = generateOptionsHtml('vieneu-thanh-binh');
-    if (elements.dramaFemaleVoice) elements.dramaFemaleVoice.innerHTML = generateOptionsHtml('vieneu-ngoc-linh');
+    if (elements.dramaNarratorVoice) elements.dramaNarratorVoice.innerHTML = generateOptionsHtml(currentNarrator);
+    if (elements.dramaMaleVoice) elements.dramaMaleVoice.innerHTML = generateOptionsHtml(currentMale);
+    if (elements.dramaFemaleVoice) elements.dramaFemaleVoice.innerHTML = generateOptionsHtml(currentFemale);
 }
 
 function renderVoiceList() {
@@ -531,6 +725,14 @@ function renderVoiceList() {
     elements.voiceListContainer.innerHTML = filtered.map(voice => {
         const isSelected = state.selectedVoice && state.selectedVoice.id === voice.id;
         const isFemale = voice.gender.toLowerCase() === 'female';
+        const isMale = voice.gender.toLowerCase() === 'male';
+        const genderLabel = isFemale ? 'Nữ' : isMale ? 'Nam' : 'Khác';
+        const genderIcon = isFemale ? 'fa-venus' : isMale ? 'fa-mars' : 'fa-user';
+        const genderClasses = isFemale
+            ? 'bg-pink-100 text-pink-700 dark:bg-pink-950/60 dark:text-pink-300'
+            : isMale
+                ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
+                : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300';
         
         return `
             <div onclick='handleSelectVoiceById("${voice.id}")' 
@@ -541,19 +743,21 @@ function renderVoiceList() {
                  }">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3 min-w-0">
-                        <span class="text-2xl select-none">${voice.flag || '🌐'}</span>
+                        <span class="text-2xl select-none">${escapeHtml(voice.flag || '🌐')}</span>
                         <div class="min-w-0">
                             <div class="flex items-center space-x-2">
-                                <span class="font-semibold text-sm text-slate-900 dark:text-white truncate">${voice.name}</span>
-                                <span class="text-[11px] px-2 py-0.5 rounded-full font-medium ${isFemale ? 'bg-pink-100 text-pink-700 dark:bg-pink-950/60 dark:text-pink-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'}">
-                                    <i class="fa-solid ${isFemale ? 'fa-venus' : 'fa-mars'} mr-0.5"></i>
-                                    ${isFemale ? 'Nữ' : 'Nam'}
+                                <span class="font-semibold text-sm text-slate-900 dark:text-white truncate">${escapeHtml(voice.name)}</span>
+                                <span class="text-[11px] px-2 py-0.5 rounded-full font-medium ${genderClasses}">
+                                    <i class="fa-solid ${genderIcon} mr-0.5"></i>
+                                    ${genderLabel}
                                 </span>
                                 ${voice.isVietnamese ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold">VN</span>' : ''}
+                                ${voice.isCustom ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-bold">CỦA TÔI</span>' : ''}
                             </div>
                             <p class="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                                ${voice.languageName} (${voice.locale})
+                                ${escapeHtml(voice.languageName)} (${escapeHtml(voice.locale)})
                             </p>
+                            ${voice.isCustom ? `<p class="mt-0.5 truncate text-[11px] text-indigo-500 dark:text-indigo-300">${escapeHtml(voice.fullInfo || '')}</p>` : ''}
                         </div>
                     </div>
                     
@@ -561,6 +765,7 @@ function renderVoiceList() {
                         <button onclick='event.stopPropagation(); previewVoiceSample("${voice.id}")' title="Nghe thử mẫu" class="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800">
                             <i class="fa-solid fa-volume-low text-xs"></i>
                         </button>
+                        ${voice.isCustom ? `<button onclick='event.stopPropagation(); refineCustomVoice("${voice.id}")' title="Bổ sung mẫu vào profile" class="p-1.5 rounded-lg text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-300"><i class="fa-solid fa-microphone-lines text-xs"></i><i class="fa-solid fa-plus ml-0.5 text-[8px]"></i></button><button onclick='event.stopPropagation(); deleteCustomVoice("${voice.id}")' title="Xóa giọng tùy chỉnh" class="p-1.5 rounded-lg text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"><i class="fa-regular fa-trash-can text-xs"></i></button>` : ''}
                         <div>
                             ${isSelected ? '<i class="fa-solid fa-circle-check text-indigo-600 dark:text-indigo-400 text-lg"></i>' : '<i class="fa-regular fa-circle text-slate-300 dark:text-slate-600"></i>'}
                         </div>
@@ -579,19 +784,22 @@ window.handleSelectVoiceById = function(voiceId) {
 function selectVoice(voice) {
     state.selectedVoice = voice;
     const isFemale = voice.gender.toLowerCase() === 'female';
+    const genderLabel = isFemale ? 'Nữ' : voice.gender.toLowerCase() === 'male' ? 'Nam' : 'Khác';
+    localStorage.setItem('tts_selected_voice', voice.id);
 
     if (elements.selectedVoiceDisplay) {
         elements.selectedVoiceDisplay.innerHTML = `
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2.5">
-                    <span class="text-2xl">${voice.flag || '🌐'}</span>
+                    <span class="text-2xl">${escapeHtml(voice.flag || '🌐')}</span>
                     <div>
                         <div class="flex items-center space-x-2">
-                            <span class="font-bold text-slate-900 dark:text-white text-sm">${voice.name}</span>
-                            <span class="text-xs px-2 py-0.5 rounded-full font-medium ${isFemale ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/50 dark:text-pink-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'}">${isFemale ? 'Nữ' : 'Nam'}</span>
+                            <span class="font-bold text-slate-900 dark:text-white text-sm">${escapeHtml(voice.name)}</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full font-medium ${isFemale ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/50 dark:text-pink-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'}">${genderLabel}</span>
                             ${voice.isVietnamese ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 font-bold">Chuẩn AI</span>' : ''}
+                            ${voice.isCustom ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 font-bold">Giọng của tôi</span>' : ''}
                         </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">${voice.languageName} • ${voice.id}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">${escapeHtml(voice.languageName)} • ${escapeHtml(voice.id)}</p>
                     </div>
                 </div>
                 <button onclick='previewVoiceSample("${voice.id}")' class="px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-600 dark:text-indigo-300 text-xs font-semibold flex items-center space-x-1.5">
@@ -627,8 +835,8 @@ window.previewVoiceSample = async function(voiceId) {
 // 1. HIGH-SPEED STANDARD TTS SUBMIT  (True Streaming — audio plays in ~2s)
 async function generateAutoExpressiveStandard(text) {
     const narratorVoice = state.selectedVoice.id;
-    const maleVoice = state.voices.find(voice => voice.gender === 'Male')?.id || 'vieneu-thanh-binh';
-    const femaleVoice = state.voices.find(voice => voice.gender === 'Female')?.id || 'vieneu-ngoc-linh';
+    const maleVoice = state.voices.find(voice => !voice.isCustom && voice.gender === 'Male')?.id || 'vieneu-thanh-binh';
+    const femaleVoice = state.voices.find(voice => !voice.isCustom && voice.gender === 'Female')?.id || 'vieneu-ngoc-linh';
     elements.generateBtnText.innerText = 'AI đang hiểu nội dung và tách từng đoạn…';
     let response = await fetch('/api/parse-dialogue/ai', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -878,7 +1086,7 @@ function renderDramaSegments() {
                         </select>
 
                         <select onchange="updateSegmentVoice(${idx}, this.value)" class="text-xs p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
-                            ${state.voices.map(voice => `<option value="${voice.id}" ${seg.voice === voice.id ? 'selected' : ''}>${voice.displayName}</option>`).join('')}
+                            ${state.voices.map(voice => `<option value="${voice.id}" ${seg.voice === voice.id ? 'selected' : ''}>${escapeHtml(voice.displayName)}</option>`).join('')}
                         </select>
 
                         <select title="Biểu cảm" onchange="updateSegmentEmotion(${idx}, this.value)" class="text-xs p-1.5 rounded-lg border border-amber-200 dark:border-amber-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
@@ -1238,7 +1446,7 @@ function renderHistory() {
             <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-850 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center space-x-2 text-xs text-slate-500 dark:text-slate-400 mb-1">
-                        <span>${item.flag || '🌐'} <strong>${item.voiceName}</strong></span>
+                        <span>${escapeHtml(item.flag || '🌐')} <strong>${escapeHtml(item.voiceName)}</strong></span>
                         <span>•</span>
                         <span>${item.lang}</span>
                         <span>•</span>

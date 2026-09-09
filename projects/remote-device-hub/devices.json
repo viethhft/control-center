@@ -1,13 +1,13 @@
 {
-  "daffeee92eed": {
-    "id": "daffeee92eed",
+  "fdef007bfeb4": {
+    "id": "fdef007bfeb4",
     "name": "V2440",
     "kind": "android",
     "note": "ADB · 10AF2P1Z9K001YU",
     "adb_serial": "10AF2P1Z9K001YU",
-    "agent_token": "c9iSPnlEj5M7XOKVS5nyA-lwhsRCZNID",
-    "created_at": 1787522934.0413418,
-    "last_seen": 1787542711.6933713,
+    "agent_token": "TvWN8G3NjysQx4zCVfVo7H6av44rdxmX",
+    "created_at": 1787657236.0743566,
+    "last_seen": 1787657551.1246743,
     "capabilities": [
       "screen",
       "pointer",

@@ -504,3 +504,139 @@ INFO:     127.0.0.1:56788 - "WebSocket /ws/agent/daffeee92eed?token=c9iSPnlEj5M7
 INFO:     connection open
 INFO:     connection closed
 INFO:     127.0.0.1:59535 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     Started server process [12848]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8040 (Press CTRL+C to quit)
+INFO:     127.0.0.1:49673 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49673 - "GET /static/style.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61451 - "GET /static/jmuxer.min.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:60153 - "GET /static/app.js?v=20260824-8 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:60153 - "GET /static/android-detect.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61451 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52473 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:61451 - "GET / HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:61451 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60153 - "GET /static/favicon.svg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:57875 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:55899 - "GET / HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:55899 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51303 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     127.0.0.1:50060 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50060 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50060 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50060 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50060 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50060 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54417 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49767 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:57294 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57294 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50692 - "GET / HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:50692 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59732 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:50692 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63375 - "GET / HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:63375 - "GET /static/style.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56323 - "GET /static/jmuxer.min.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62033 - "GET /static/app.js?v=20260824-8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62033 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56323 - "GET /static/android-detect.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56323 - "GET /static/favicon.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56476 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     127.0.0.1:51127 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49185 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:51127 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET / HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:59021 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59021 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59399 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:57691 - "GET / HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:57691 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57691 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57691 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59307 - "WebSocket /ws/view/daffeee92eed" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:57691 - "DELETE /api/devices/daffeee92eed HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57691 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57691 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57691 - "GET /api/android/connected HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57691 - "POST /api/android/connect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57691 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58035 - "WebSocket /ws/agent/fdef007bfeb4?token=TvWN8G3NjysQx4zCVfVo7H6av44rdxmX&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:57691 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:50342 - "WebSocket /ws/agent/fdef007bfeb4?token=TvWN8G3NjysQx4zCVfVo7H6av44rdxmX&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     127.0.0.1:50152 - "WebSocket /ws/agent/fdef007bfeb4?token=TvWN8G3NjysQx4zCVfVo7H6av44rdxmX&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     127.0.0.1:59024 - "WebSocket /ws/agent/fdef007bfeb4?token=TvWN8G3NjysQx4zCVfVo7H6av44rdxmX&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:51355 - "WebSocket /ws/view/fdef007bfeb4" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     127.0.0.1:51358 - "WebSocket /ws/agent/fdef007bfeb4?token=TvWN8G3NjysQx4zCVfVo7H6av44rdxmX&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:55524 - "POST /api/devices/fdef007bfeb4/upload?filename=lam.mp4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54679 - "WebSocket /ws/view/fdef007bfeb4" [accepted]
+INFO:     connection open
+INFO:     connection closed
+INFO:     127.0.0.1:54682 - "WebSocket /ws/agent/fdef007bfeb4?token=TvWN8G3NjysQx4zCVfVo7H6av44rdxmX&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:49393 - "GET / HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     connection closed
+INFO:     connection closed
+INFO:     127.0.0.1:49393 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:49393 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49393 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60011 - "WebSocket /ws/agent/fdef007bfeb4?token=TvWN8G3NjysQx4zCVfVo7H6av44rdxmX&enrollment=change-me-device-hub" [accepted]
+INFO:     connection open

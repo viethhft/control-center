@@ -12,6 +12,26 @@ không bị giới hạn quota và không chiếm kết nối WebSocket tới d�
 - vieneu-thanh-binh: giọng nam Bắc, dùng cho vai nam.
 - Các giọng còn lại có thể chọn trực tiếp trên giao diện.
 
+### Tạo giọng tùy chỉnh
+
+Trong mục **Tạo giọng của tôi**, tải từ 1 đến 8 file WAV, MP3, FLAC hoặc OGG. Mỗi
+file nên có 3–8 giây giọng nói rõ ràng của cùng một người, không nhạc nền và ít
+tiếng vang. Ứng dụng kiểm tra và lưu riêng từng mẫu, trích đặc trưng người nói bằng
+VieNeu v3 Turbo, tự loại mẫu lệch giọng rõ rệt và tổng hợp các mẫu còn lại thành
+một profile. Profile được lưu tại `data/custom_voices`, xuất hiện trong cả chế độ
+đọc thường và phân vai, đồng thời vẫn dùng được sau khi khởi động lại.
+
+Với giọng đã tạo, bấm nút **micro +** trong thẻ giọng để bổ sung thêm 1–8 file mỗi
+lần (tối đa 24 mẫu/profile). Mỗi lần cập nhật, ứng dụng đối chiếu lại toàn bộ mẫu,
+gộp speaker embedding của các mẫu phù hợp và dùng đoạn tốt nhất làm tham chiếu.
+Nên dùng các câu khác nhau nhưng cùng người nói, cùng kiểu thu và chất lượng tương
+đối đồng đều. Số mẫu thực sự được dùng/tổng số mẫu được hiển thị ngay trong thẻ.
+
+Đây là zero-shot voice cloning có tổng hợp nhiều speaker embedding, không phải
+fine-tune model. VieNeu chỉ dùng tối đa 8 giây từ mỗi file. Fine-tune LoRA từ bộ dữ
+liệu có transcript là một pipeline GPU riêng và không chạy trên backend ONNX/CPU
+hiện tại.
+
 ## Cài đặt
 
 Yêu cầu Python 3.10:

@@ -1,0 +1,11 @@
+INFO:     127.0.0.1:60351 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60351 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60351 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55890 - "GET /favicon.svg?v=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60351 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55890 - "POST /api/projects/de1d12e4016d4ee7b8f1cb7e1cf3abf8/resume HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55890 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55890 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55890 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55890 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55890 - "GET /api/projects HTTP/1.1" 200 OK

@@ -271,3 +271,44 @@ INFO:     127.0.0.1:49929 - "GET /api/analyze/jobs/dde1cf2934274e65be4f3b76b5ffd
 INFO:     127.0.0.1:49929 - "GET /api/analyze/jobs/dde1cf2934274e65be4f3b76b5ffd998 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:49929 - "POST /api/analyze/jobs/dde1cf2934274e65be4f3b76b5ffd998/cancel HTTP/1.1" 200 OK
 INFO:     127.0.0.1:49929 - "GET /api/analyze/jobs/dde1cf2934274e65be4f3b76b5ffd998 HTTP/1.1" 200 OK
+INFO:     Started server process [15684]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8010 (Press CTRL+C to quit)
+INFO:     127.0.0.1:53666 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53666 - "GET /static/style.css?v=6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54357 - "GET /static/wizard.css?v=6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56359 - "GET /static/references.css?v=6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58948 - "GET /static/delete-project.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54784 - "GET /static/ui-dialog.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50296 - "GET /static/ui-v4.css?v=6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56359 - "GET /static/ui-dialog.js?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54357 - "GET /static/app.js?v=12 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53666 - "GET /static/setup-layout.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58948 - "GET /static/ui-enhance.js?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58948 - "GET /static/ui-v4.css?v=4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56359 - "GET /static/references.css?v=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54784 - "GET /static/character-picker.js?v=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54357 - "GET /static/wizard.js?v=9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53666 - "GET /static/render-manager.js?v=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54357 - "GET /static/wizard.css?v=6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54357 - "GET /static/favicon.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50296 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55963 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55963 - "GET /static/style.css?v=6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64183 - "GET /static/ui-v4.css?v=6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61450 - "GET /static/wizard.css?v=6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59869 - "GET /static/references.css?v=6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63313 - "GET /static/delete-project.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65114 - "GET /static/ui-dialog.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55963 - "GET /static/setup-layout.css?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64183 - "GET /static/ui-dialog.js?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63313 - "GET /static/app.js?v=12 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65114 - "GET /static/ui-enhance.js?v=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65114 - "GET /static/render-manager.js?v=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63313 - "GET /static/ui-v4.css?v=4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55963 - "GET /static/references.css?v=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61450 - "GET /static/character-picker.js?v=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64183 - "GET /static/wizard.js?v=9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65114 - "GET /static/wizard.css?v=6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59869 - "GET /api/health HTTP/1.1" 200 OK

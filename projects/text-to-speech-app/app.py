@@ -25,9 +25,12 @@ import threading
 import json
 import urllib.error
 import urllib.request
+import shutil
 from collections import OrderedDict
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Optional, List, Dict, Any, AsyncGenerator
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -57,10 +60,13 @@ async def disable_frontend_cache(request, call_next):
     return response
 
 # ── Disk cache for repeated texts ──────────────────────────────────────────────
+BASE_DIR = Path(__file__).resolve().parent
 CACHE_DIR = os.path.join(os.path.dirname(__file__), "audio_cache")
 os.makedirs(CACHE_DIR, exist_ok=True)
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "generated_audio")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+CUSTOM_VOICE_DIR = BASE_DIR / "data" / "custom_voices"
+CUSTOM_VOICE_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_JOBS: Dict[str, Dict[str, Any]] = {}
 PARSE_JOBS: Dict[str, Dict[str, Any]] = {}
 VISUAL_JOBS: Dict[str, Dict[str, Any]] = {}
@@ -70,6 +76,13 @@ MAX_RAM_CACHE_BYTES = 64 * 1024 * 1024
 
 VOICES_CACHE: List[Dict[str, Any]] = []
 VOICES_LOADING_LOCK = asyncio.Lock()
+CUSTOM_VOICE_PROFILES: Dict[str, Dict[str, Any]] = {}
+CUSTOM_VOICE_METADATA: Dict[str, Dict[str, Any]] = {}
+CUSTOM_VOICE_REGISTRY_LOCK = threading.RLock()
+CUSTOM_VOICE_ID_PATTERN = re.compile(r"^custom:([0-9a-f]{32})$")
+MAX_CUSTOM_VOICE_FILES = 8
+MAX_CUSTOM_VOICE_SAMPLES = 24
+MAX_CUSTOM_VOICE_FILE_BYTES = 25 * 1024 * 1024
 EDGE_CONNECTION_LIMIT = asyncio.Semaphore(1)
 EDGE_RATE_LOCK = asyncio.Lock()
 EDGE_CONNECT_TIMEOUT = 25
@@ -117,6 +130,450 @@ VIENEU_LOAD_LOCK = threading.Lock()
 VIENEU_SYNTH_LOCK = asyncio.Lock()
 
 OUTPUT_SAMPLE_RATE = 48000
+
+
+def _custom_voice_folder(voice_id: str) -> Path:
+    match = CUSTOM_VOICE_ID_PATTERN.fullmatch(voice_id or "")
+    if not match:
+        raise ValueError("Mã giọng tùy chỉnh không hợp lệ")
+    folder = (CUSTOM_VOICE_DIR / match.group(1)).resolve()
+    if folder.parent != CUSTOM_VOICE_DIR.resolve():
+        raise ValueError("Đường dẫn giọng tùy chỉnh không hợp lệ")
+    return folder
+
+
+def _custom_voice_public(meta: Dict[str, Any]) -> Dict[str, Any]:
+    name = str(meta.get("name") or "Giọng tùy chỉnh")
+    gender = str(meta.get("gender") or "Unknown")
+    total_samples = int(meta.get("sourceFileCount", 1))
+    used_samples = int(meta.get("usedSampleCount", total_samples))
+    return {
+        "id": meta["id"],
+        "name": name,
+        "displayName": f"{name} (Giọng của tôi)",
+        "gender": gender,
+        "locale": "vi-VN",
+        "languageName": "Tiếng Việt (Giọng tùy chỉnh)",
+        "flag": "🎙️",
+        "gttsLang": "vi",
+        "popular": True,
+        "isVietnamese": True,
+        "isCustom": True,
+        "source": "custom",
+        "sampleText": meta.get(
+            "sampleText", "Xin chào, đây là giọng đọc tùy chỉnh vừa được tạo."
+        ),
+        "fullInfo": (
+            f"VieNeu v3 Turbo • Tổng hợp {used_samples}/{total_samples} mẫu"
+        ),
+        "sampleCount": total_samples,
+        "usedSampleCount": used_samples,
+        "qualityScore": meta.get("qualityScore"),
+        "createdAt": meta.get("createdAt"),
+        "updatedAt": meta.get("updatedAt", meta.get("createdAt")),
+    }
+
+
+def load_custom_voice_registry() -> None:
+    """Load app-owned custom voice profiles without modifying site-packages."""
+    loaded_profiles: Dict[str, Dict[str, Any]] = {}
+    loaded_metadata: Dict[str, Dict[str, Any]] = {}
+    for meta_path in CUSTOM_VOICE_DIR.glob("*/meta.json"):
+        try:
+            meta = json.loads(meta_path.read_text(encoding="utf-8"))
+            voice_id = str(meta.get("id") or "")
+            folder = _custom_voice_folder(voice_id)
+            profile_path = folder / "profile.npz"
+            if meta_path.parent.resolve() != folder or not profile_path.is_file():
+                continue
+            with np.load(profile_path, allow_pickle=False) as values:
+                speaker_emb = np.asarray(values["speaker_emb"], dtype=np.float32)
+                codes = np.asarray(values["codes"], dtype=np.int64)
+            if speaker_emb.size == 0:
+                continue
+            loaded_profiles[voice_id] = {
+                "speaker_emb": speaker_emb,
+                "codes": codes if codes.size else None,
+            }
+            loaded_metadata[voice_id] = meta
+        except Exception as exc:
+            print(f"Skipping invalid custom voice {meta_path.parent.name}: {type(exc).__name__}")
+    with CUSTOM_VOICE_REGISTRY_LOCK:
+        CUSTOM_VOICE_PROFILES.clear()
+        CUSTOM_VOICE_PROFILES.update(loaded_profiles)
+        CUSTOM_VOICE_METADATA.clear()
+        CUSTOM_VOICE_METADATA.update(loaded_metadata)
+
+
+def _known_voice(voice_id: str) -> bool:
+    with CUSTOM_VOICE_REGISTRY_LOCK:
+        return voice_id in VIENEU_VOICE_NAMES or voice_id in CUSTOM_VOICE_PROFILES
+
+
+def _voice_cache_identity(voice_id: str) -> str:
+    with CUSTOM_VOICE_REGISTRY_LOCK:
+        meta = CUSTOM_VOICE_METADATA.get(voice_id)
+        return f"{voice_id}@{meta.get('revision', '1')}" if meta else voice_id
+
+
+def _prepare_voice_sample(data: bytes, filename: str) -> Dict[str, Any]:
+    """Decode, validate, trim and normalize one candidate reference clip."""
+    import librosa
+    import soundfile as sf
+
+    try:
+        with sf.SoundFile(io.BytesIO(data)) as audio_file:
+            sample_rate = int(audio_file.samplerate)
+            original_duration = len(audio_file) / float(sample_rate)
+            if original_duration > 300:
+                raise ValueError(f"{filename}: file mẫu không được dài quá 5 phút")
+            # Only the beginning is useful for the eight-second VieNeu reference.
+            waveform = audio_file.read(
+                frames=min(len(audio_file), round(sample_rate * 30)),
+                dtype="float32",
+                always_2d=False,
+            )
+    except ValueError:
+        raise
+    except Exception as exc:
+        raise ValueError(f"Không đọc được file {filename}. Hãy dùng WAV, MP3, FLAC hoặc OGG.") from exc
+    if sample_rate < 8000 or sample_rate > 192000:
+        raise ValueError(f"{filename}: tần số lấy mẫu không được hỗ trợ")
+    waveform = np.asarray(waveform, dtype=np.float32)
+    if waveform.ndim == 2:
+        waveform = waveform.mean(axis=1)
+    if waveform.ndim != 1 or waveform.size == 0 or not np.isfinite(waveform).all():
+        raise ValueError(f"{filename}: dữ liệu âm thanh không hợp lệ")
+    waveform, _ = librosa.effects.trim(waveform, top_db=30)
+    duration = waveform.size / float(sample_rate)
+    if duration < 3.0:
+        raise ValueError(f"{filename}: cần ít nhất 3 giây có tiếng nói rõ ràng")
+
+    # VieNeu v3 Turbo uses at most eight seconds for voice enrollment.
+    waveform = waveform[: round(sample_rate * 8.0)]
+    duration = waveform.size / float(sample_rate)
+    rms = float(np.sqrt(np.mean(np.square(waveform), dtype=np.float64)))
+    peak = float(np.max(np.abs(waveform)))
+    clipped_ratio = float(np.mean(np.abs(waveform) >= 0.985))
+    if rms < 0.002:
+        raise ValueError(f"{filename}: âm lượng quá nhỏ hoặc phần lớn là khoảng lặng")
+    if clipped_ratio > 0.05:
+        raise ValueError(f"{filename}: âm thanh bị vỡ/clipping quá nhiều")
+
+    # Keep natural dynamics while bringing unusually quiet/loud clips into a safe range.
+    gain = min(3.0, max(0.5, 0.09 / rms))
+    waveform = waveform * gain
+    normalized_peak = float(np.max(np.abs(waveform)))
+    if normalized_peak > 0.95:
+        waveform = waveform * (0.95 / normalized_peak)
+    if sample_rate != 44100:
+        waveform = librosa.resample(waveform, orig_sr=sample_rate, target_sr=44100)
+        sample_rate = 44100
+
+    duration_score = min(duration / 8.0, 1.0) * 45.0
+    level_score = max(0.0, 35.0 - abs(np.log10(max(rms, 1e-6) / 0.08)) * 22.0)
+    clipping_score = max(0.0, 20.0 - clipped_ratio * 400.0)
+    quality_score = float(round(min(100.0, duration_score + level_score + clipping_score), 1))
+    return {
+        "filename": Path(filename or "audio").name[:180],
+        "waveform": np.asarray(waveform, dtype=np.float32),
+        "sample_rate": sample_rate,
+        "duration": round(duration, 2),
+        "quality_score": quality_score,
+    }
+
+
+def _save_voice_candidates(
+    folder: Path, candidates: List[Dict[str, Any]]
+) -> List[Dict[str, Any]]:
+    """Persist normalized candidate clips and return their metadata records."""
+    import soundfile as sf
+
+    samples_folder = folder / "samples"
+    samples_folder.mkdir(parents=True, exist_ok=True)
+    created_at = datetime.now(timezone.utc).isoformat()
+    records: List[Dict[str, Any]] = []
+    written_paths: List[Path] = []
+    try:
+        for candidate in candidates:
+            sample_id = uuid.uuid4().hex
+            relative_path = f"samples/{sample_id}.wav"
+            sample_path = folder / relative_path
+            written_paths.append(sample_path)
+            sf.write(
+                sample_path,
+                candidate["waveform"],
+                candidate["sample_rate"],
+                subtype="PCM_16",
+            )
+            records.append({
+                "id": sample_id,
+                "file": relative_path,
+                "originalName": candidate["filename"],
+                "duration": candidate["duration"],
+                "qualityScore": candidate["quality_score"],
+                "createdAt": created_at,
+            })
+    except Exception:
+        for written_path in written_paths:
+            try:
+                written_path.unlink()
+            except OSError:
+                pass
+        raise
+    return records
+
+
+def _voice_sample_path(folder: Path, record: Dict[str, Any]) -> Path:
+    relative_path = str(record.get("file") or "")
+    sample_path = (folder / relative_path).resolve()
+    if not relative_path or (sample_path != folder and folder not in sample_path.parents):
+        raise ValueError("Đường dẫn file mẫu không hợp lệ")
+    if not sample_path.is_file():
+        raise FileNotFoundError(relative_path)
+    return sample_path
+
+
+def _build_aggregated_voice_profile(
+    folder: Path, records: List[Dict[str, Any]]
+) -> Dict[str, Any]:
+    """Extract every speaker embedding, remove clear outliers, then aggregate."""
+
+    engine = get_vieneu_engine()
+    prepare_reference = getattr(getattr(engine, "engine", None), "prepare_reference", None)
+    if prepare_reference is None:
+        raise RuntimeError("Phiên bản VieNeu hiện tại không hỗ trợ đăng ký giọng")
+
+    extracted: List[Dict[str, Any]] = []
+    failed_ids = set()
+    expected_size: Optional[int] = None
+    for record in records:
+        try:
+            sample_path = _voice_sample_path(folder, record)
+            speaker_value, codes_value = prepare_reference(
+                str(sample_path), denoise=True, use_ref_codes=True
+            )
+            embedding = np.asarray(speaker_value, dtype=np.float32)
+            if embedding.size == 0 or not np.isfinite(embedding).all():
+                raise ValueError("Không trích xuất được đặc trưng")
+            if expected_size is None:
+                expected_size = embedding.size
+            if embedding.size != expected_size:
+                raise ValueError("Kích thước đặc trưng không đồng nhất")
+            codes = (
+                np.asarray(codes_value, dtype=np.int64)
+                if codes_value is not None
+                else np.array([], dtype=np.int64)
+            )
+            extracted.append({
+                "record": record,
+                "embedding": embedding,
+                "flat": embedding.reshape(-1),
+                "codes": codes,
+                "path": sample_path,
+            })
+        except Exception as exc:
+            failed_ids.add(str(record.get("id") or ""))
+            print(
+                f"Skipping custom voice sample {record.get('id')}: "
+                f"{type(exc).__name__}: {exc}"
+            )
+
+    if not extracted:
+        raise RuntimeError("VieNeu không trích xuất được đặc trưng người nói")
+
+    matrix = np.stack([item["flat"] for item in extracted]).astype(np.float64)
+    norms = np.linalg.norm(matrix, axis=1)
+    normalized = matrix / np.maximum(norms[:, None], 1e-12)
+    similarities = np.clip(normalized @ normalized.T, -1.0, 1.0)
+    centrality = similarities.mean(axis=1)
+    qualities = np.asarray([
+        float(item["record"].get("qualityScore") or 0.0) / 100.0
+        for item in extracted
+    ])
+    representative_index = int(np.argmax(qualities * 0.65 + ((centrality + 1.0) / 2.0) * 0.35))
+    representative_similarities = similarities[representative_index]
+
+    # A strongly dissimilar recording is likely another speaker or corrupted audio.
+    accepted_mask = representative_similarities >= 0.25
+    accepted_mask[representative_index] = True
+    accepted = [item for index, item in enumerate(extracted) if accepted_mask[index]]
+    accepted_similarities = representative_similarities[accepted_mask]
+    accepted_qualities = qualities[accepted_mask]
+    weights = (0.5 + accepted_qualities) * (0.5 + np.maximum(accepted_similarities, 0.0))
+    accepted_matrix = np.stack([item["flat"] for item in accepted]).astype(np.float64)
+    aggregate_flat = np.average(accepted_matrix, axis=0, weights=weights)
+    target_norm = float(np.average(np.linalg.norm(accepted_matrix, axis=1), weights=weights))
+    aggregate_norm = float(np.linalg.norm(aggregate_flat))
+    if aggregate_norm > 1e-12 and target_norm > 0:
+        aggregate_flat *= target_norm / aggregate_norm
+    aggregate = aggregate_flat.reshape(accepted[0]["embedding"].shape).astype(np.float32)
+
+    representative = extracted[representative_index]
+    accepted_ids = {str(item["record"].get("id") or "") for item in accepted}
+    similarity_by_id = {
+        str(item["record"].get("id") or ""): round(float(representative_similarities[index]), 4)
+        for index, item in enumerate(extracted)
+    }
+    updated_records = []
+    for record in records:
+        record_copy = dict(record)
+        record_id = str(record.get("id") or "")
+        record_copy["used"] = record_id in accepted_ids
+        record_copy["similarity"] = similarity_by_id.get(record_id)
+        if record_id in failed_ids:
+            record_copy["used"] = False
+        updated_records.append(record_copy)
+
+    return {
+        "speaker_emb": aggregate,
+        "codes": representative["codes"],
+        "reference_path": representative["path"],
+        "representative": representative["record"],
+        "records": updated_records,
+        "used_count": len(accepted),
+    }
+
+
+def _persist_custom_voice_profile(
+    folder: Path, profile: Dict[str, Any], meta: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Replace the reusable profile and its metadata using same-folder temp files."""
+    profile_path = folder / "profile.npz"
+    reference_path = folder / "reference.wav"
+    meta_path = folder / "meta.json"
+    temporary_profile = folder / "profile.npz.part"
+    temporary_reference = folder / "reference.wav.part"
+    temporary_meta = folder / "meta.json.part"
+    existing_files = (profile_path, reference_path, meta_path)
+    backups = {
+        existing_path: existing_path.read_bytes() if existing_path.is_file() else None
+        for existing_path in existing_files
+    }
+
+    try:
+        with temporary_profile.open("wb") as profile_file:
+            np.savez_compressed(
+                profile_file,
+                speaker_emb=profile["speaker_emb"],
+                codes=profile["codes"],
+            )
+        shutil.copyfile(profile["reference_path"], temporary_reference)
+        meta = dict(meta)
+        meta["revision"] = hashlib.sha256(temporary_profile.read_bytes()).hexdigest()[:16]
+        temporary_meta.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+        os.replace(temporary_profile, profile_path)
+        os.replace(temporary_reference, reference_path)
+        os.replace(temporary_meta, meta_path)
+        return meta
+    except Exception:
+        # Refinement must never leave a half-updated profile on disk.
+        for existing_path, backup in backups.items():
+            try:
+                if backup is None:
+                    existing_path.unlink(missing_ok=True)
+                else:
+                    rollback_path = existing_path.with_name(existing_path.name + ".rollback")
+                    rollback_path.write_bytes(backup)
+                    os.replace(rollback_path, existing_path)
+            except Exception as rollback_exc:
+                print(
+                    f"Custom voice rollback failed for {existing_path.name}: "
+                    f"{type(rollback_exc).__name__}"
+                )
+        raise
+    finally:
+        for temporary_path in (
+            temporary_profile,
+            temporary_reference,
+            temporary_meta,
+            *(path.with_name(path.name + ".rollback") for path in existing_files),
+        ):
+            try:
+                temporary_path.unlink()
+            except OSError:
+                pass
+
+
+def _enroll_custom_voice(
+    voice_id: str,
+    name: str,
+    gender: str,
+    candidates: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    """Create a reusable profile from all consistent candidate recordings."""
+    folder = _custom_voice_folder(voice_id)
+    folder.mkdir(parents=False, exist_ok=False)
+    records = _save_voice_candidates(folder, candidates)
+    profile = _build_aggregated_voice_profile(folder, records)
+    representative = profile["representative"]
+    now = datetime.now(timezone.utc).isoformat()
+
+    meta = {
+        "id": voice_id,
+        "name": name,
+        "gender": gender,
+        "sourceFileCount": len(records),
+        "usedSampleCount": profile["used_count"],
+        "selectedSample": representative["originalName"],
+        "selectedSampleId": representative["id"],
+        "selectedDuration": representative["duration"],
+        "qualityScore": representative["qualityScore"],
+        "samples": profile["records"],
+        "createdAt": now,
+        "updatedAt": now,
+        "sampleText": "Xin chào, đây là giọng đọc tùy chỉnh vừa được tạo từ mẫu của tôi.",
+    }
+    return _persist_custom_voice_profile(folder, profile, meta)
+
+
+def _refine_custom_voice(
+    voice_id: str, candidates: List[Dict[str, Any]]
+) -> Dict[str, Any]:
+    """Append normalized recordings and rebuild an existing aggregate profile."""
+    folder = _custom_voice_folder(voice_id)
+    with CUSTOM_VOICE_REGISTRY_LOCK:
+        current_meta = dict(CUSTOM_VOICE_METADATA.get(voice_id) or {})
+    if not current_meta or not folder.is_dir():
+        raise ValueError("Không tìm thấy giọng tùy chỉnh")
+
+    records = [dict(record) for record in current_meta.get("samples", [])]
+    if not records:
+        # Profiles created by the earlier version only retained reference.wav.
+        records = [{
+            "id": "legacy-reference",
+            "file": "reference.wav",
+            "originalName": current_meta.get("selectedSample", "Mẫu cũ"),
+            "duration": current_meta.get("selectedDuration"),
+            "qualityScore": current_meta.get("qualityScore", 70.0),
+            "createdAt": current_meta.get("createdAt"),
+        }]
+    if len(records) + len(candidates) > MAX_CUSTOM_VOICE_SAMPLES:
+        raise ValueError(f"Mỗi profile được lưu tối đa {MAX_CUSTOM_VOICE_SAMPLES} mẫu")
+
+    new_records = _save_voice_candidates(folder, candidates)
+    try:
+        all_records = records + new_records
+        profile = _build_aggregated_voice_profile(folder, all_records)
+        representative = profile["representative"]
+        current_meta.update({
+            "sourceFileCount": len(all_records),
+            "usedSampleCount": profile["used_count"],
+            "selectedSample": representative["originalName"],
+            "selectedSampleId": representative["id"],
+            "selectedDuration": representative.get("duration"),
+            "qualityScore": representative.get("qualityScore"),
+            "samples": profile["records"],
+            "updatedAt": datetime.now(timezone.utc).isoformat(),
+        })
+        return _persist_custom_voice_profile(folder, profile, current_meta)
+    except Exception:
+        for record in new_records:
+            try:
+                _voice_sample_path(folder, record).unlink()
+            except (FileNotFoundError, ValueError):
+                pass
+        raise
 
 LANGUAGE_MAP = {
     "vi-VN": {"name": "Tiếng Việt (Việt Nam)", "flag": "🇻🇳", "popular": True, "gtts_lang": "vi",
@@ -512,10 +969,16 @@ def vieneu_synthesize_pcm(
     import librosa
 
     engine = get_vieneu_engine()
-    voice_name = VIENEU_VOICE_NAMES.get(voice_id, "Ngọc Linh")
-    style = VIENEU_VOICE_STYLES.get(voice_id, "doc_truyen")
+    with CUSTOM_VOICE_REGISTRY_LOCK:
+        custom_profile = CUSTOM_VOICE_PROFILES.get(voice_id)
+    if custom_profile is not None:
+        voice_value: Any = custom_profile
+    else:
+        voice_value = VIENEU_VOICE_NAMES.get(voice_id)
+    if voice_value is None:
+        raise ValueError(f"Không tìm thấy giọng đọc: {voice_id}")
     audio = np.asarray(
-        engine.infer(text, voice=voice_name, style=style), dtype=np.float32
+        engine.infer(text, voice=voice_value), dtype=np.float32
     )
 
     rate_match = re.search(r"([+-]?\d+)", rate or "0")
@@ -548,8 +1011,15 @@ async def synthesize_chunk(
     speak_text = clean_text_for_tts(text)
     if not speak_text or not any(char.isalnum() for char in speak_text):
         return idx, b""
-    voice = voice if voice in VIENEU_VOICE_NAMES else "vieneu-ngoc-linh"
-    key = cache_key(f"vieneu-v3|{speak_text}", voice, rate, pitch, volume)
+    if not _known_voice(voice):
+        raise ValueError(f"Không tìm thấy giọng đọc: {voice}")
+    key = cache_key(
+        f"vieneu-v3|{_voice_cache_identity(voice)}|{speak_text}",
+        voice,
+        rate,
+        pitch,
+        volume,
+    )
     cached = get_cached(key)
     if cached:
         print(f"  [VieNeu cache] chunk {idx}")
@@ -706,7 +1176,17 @@ async def load_voices():
 
 async def load_local_voices():
     global VOICES_CACHE
-    VOICES_CACHE = [dict(voice) for voice in FALLBACK_VOICES]
+    await asyncio.to_thread(load_custom_voice_registry)
+    with CUSTOM_VOICE_REGISTRY_LOCK:
+        custom_voices = [
+            _custom_voice_public(meta)
+            for meta in sorted(
+                CUSTOM_VOICE_METADATA.values(),
+                key=lambda value: str(value.get("createdAt", "")),
+                reverse=True,
+            )
+        ]
+    VOICES_CACHE = custom_voices + [dict(voice) for voice in FALLBACK_VOICES]
 
 
 @app.on_event("startup")
@@ -722,6 +1202,7 @@ async def health():
         "status": "ok",
         "provider": "vieneu-v3-local",
         "voices": len(VOICES_CACHE),
+        "custom_voices": len(CUSTOM_VOICE_METADATA),
         "models_loaded": 1 if VIENEU_ENGINE is not None else 0,
         "cached_chunks": len(RAM_CACHE),
     }
@@ -746,6 +1227,166 @@ async def get_voices(
                     if s in v["name"].lower() or s in v["id"].lower()
                     or s in v["languageName"].lower() or s in v["locale"].lower()]
     return {"total": len(filtered), "voices": filtered}
+
+
+@app.get("/api/custom-voices")
+async def get_custom_voices():
+    with CUSTOM_VOICE_REGISTRY_LOCK:
+        voices = [_custom_voice_public(meta) for meta in CUSTOM_VOICE_METADATA.values()]
+    voices.sort(key=lambda value: str(value.get("createdAt", "")), reverse=True)
+    return {"total": len(voices), "voices": voices}
+
+
+async def _read_custom_voice_uploads(
+    files: List[UploadFile],
+) -> tuple[List[Dict[str, Any]], List[str]]:
+    if not files or len(files) > MAX_CUSTOM_VOICE_FILES:
+        raise HTTPException(400, f"Mỗi lần hãy tải từ 1 đến {MAX_CUSTOM_VOICE_FILES} file")
+    allowed_extensions = {".wav", ".mp3", ".flac", ".ogg"}
+    candidates: List[Dict[str, Any]] = []
+    rejected: List[str] = []
+    for upload in files:
+        filename = Path(upload.filename or "audio").name
+        try:
+            if Path(filename).suffix.lower() not in allowed_extensions:
+                raise ValueError(f"{filename}: chỉ hỗ trợ WAV, MP3, FLAC hoặc OGG")
+            data = await upload.read(MAX_CUSTOM_VOICE_FILE_BYTES + 1)
+            if len(data) > MAX_CUSTOM_VOICE_FILE_BYTES:
+                raise ValueError(f"{filename}: dung lượng vượt quá 25 MB")
+            if not data:
+                raise ValueError(f"{filename}: file rỗng")
+            candidates.append(await asyncio.to_thread(_prepare_voice_sample, data, filename))
+        except ValueError as exc:
+            rejected.append(str(exc))
+        finally:
+            await upload.close()
+    if not candidates:
+        message = "\n".join(rejected[:5]) or "Không có file mẫu hợp lệ"
+        raise HTTPException(400, message)
+    return candidates, rejected
+
+
+@app.post("/api/custom-voices", status_code=201)
+async def create_custom_voice(
+    name: str = Form(...),
+    gender: str = Form("Unknown"),
+    consent: bool = Form(...),
+    files: List[UploadFile] = File(...),
+):
+    name = unicodedata.normalize("NFC", name).strip()
+    name = re.sub(r"[\x00-\x1f\x7f]", "", name)
+    if not consent:
+        raise HTTPException(400, "Bạn cần xác nhận có quyền sử dụng giọng nói này")
+    if not 1 <= len(name) <= 60:
+        raise HTTPException(400, "Tên giọng phải có từ 1 đến 60 ký tự")
+    if gender not in {"Female", "Male", "Unknown"}:
+        raise HTTPException(400, "Giới tính giọng không hợp lệ")
+    with CUSTOM_VOICE_REGISTRY_LOCK:
+        if any(str(meta.get("name", "")).casefold() == name.casefold()
+               for meta in CUSTOM_VOICE_METADATA.values()):
+            raise HTTPException(409, "Tên giọng này đã tồn tại")
+
+    candidates, rejected = await _read_custom_voice_uploads(files)
+
+    voice_id = f"custom:{uuid.uuid4().hex}"
+    folder = _custom_voice_folder(voice_id)
+    try:
+        async with VIENEU_SYNTH_LOCK:
+            meta = await asyncio.to_thread(
+                _enroll_custom_voice, voice_id, name, gender, candidates
+            )
+        await load_local_voices()
+    except Exception as exc:
+        if folder.is_dir():
+            shutil.rmtree(folder)
+        print(f"Custom voice enrollment failed: {type(exc).__name__}: {exc}")
+        raise HTTPException(
+            500,
+            "Không thể tạo giọng. Hãy kiểm tra kết nối tải model lần đầu và chất lượng file mẫu.",
+        ) from exc
+
+    return {
+        "voice": _custom_voice_public(meta),
+        "selectedSample": meta["selectedSample"],
+        "acceptedFiles": len(candidates),
+        "rejectedFiles": rejected,
+    }
+
+
+@app.post("/api/custom-voices/{voice_id}/samples")
+async def add_custom_voice_samples(
+    voice_id: str,
+    consent: bool = Form(...),
+    files: List[UploadFile] = File(...),
+):
+    if not consent:
+        raise HTTPException(400, "Bạn cần xác nhận có quyền sử dụng giọng nói này")
+    try:
+        folder = _custom_voice_folder(voice_id)
+    except ValueError as exc:
+        raise HTTPException(404, "Không tìm thấy giọng tùy chỉnh") from exc
+    with CUSTOM_VOICE_REGISTRY_LOCK:
+        current_meta = CUSTOM_VOICE_METADATA.get(voice_id)
+    if current_meta is None or not folder.is_dir():
+        raise HTTPException(404, "Không tìm thấy giọng tùy chỉnh")
+
+    current_count = int(current_meta.get("sourceFileCount", 1))
+    if current_count + len(files) > MAX_CUSTOM_VOICE_SAMPLES:
+        raise HTTPException(
+            400,
+            f"Profile đang có {current_count} mẫu; chỉ được lưu tối đa "
+            f"{MAX_CUSTOM_VOICE_SAMPLES} mẫu",
+        )
+    candidates, rejected = await _read_custom_voice_uploads(files)
+    try:
+        async with VIENEU_SYNTH_LOCK:
+            meta = await asyncio.to_thread(_refine_custom_voice, voice_id, candidates)
+        await load_local_voices()
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    except Exception as exc:
+        print(f"Custom voice refinement failed: {type(exc).__name__}: {exc}")
+        raise HTTPException(
+            500,
+            "Không thể cập nhật profile. Dữ liệu giọng cũ vẫn được giữ nguyên.",
+        ) from exc
+
+    return {
+        "voice": _custom_voice_public(meta),
+        "selectedSample": meta["selectedSample"],
+        "acceptedFiles": len(candidates),
+        "rejectedFiles": rejected,
+        "totalSamples": meta["sourceFileCount"],
+        "usedSamples": meta["usedSampleCount"],
+    }
+
+
+@app.get("/api/custom-voices/{voice_id}/reference")
+async def get_custom_voice_reference(voice_id: str):
+    try:
+        reference_path = _custom_voice_folder(voice_id) / "reference.wav"
+    except ValueError as exc:
+        raise HTTPException(404, "Không tìm thấy giọng tùy chỉnh") from exc
+    if voice_id not in CUSTOM_VOICE_METADATA or not reference_path.is_file():
+        raise HTTPException(404, "Không tìm thấy file mẫu")
+    return FileResponse(reference_path, media_type="audio/wav", filename="voice-reference.wav")
+
+
+@app.delete("/api/custom-voices/{voice_id}")
+async def delete_custom_voice(voice_id: str):
+    try:
+        folder = _custom_voice_folder(voice_id)
+    except ValueError as exc:
+        raise HTTPException(404, "Không tìm thấy giọng tùy chỉnh") from exc
+    with CUSTOM_VOICE_REGISTRY_LOCK:
+        meta = CUSTOM_VOICE_METADATA.get(voice_id)
+    if meta is None or not folder.is_dir():
+        raise HTTPException(404, "Không tìm thấy giọng tùy chỉnh")
+
+    async with VIENEU_SYNTH_LOCK:
+        shutil.rmtree(folder)
+    await load_local_voices()
+    return {"deleted": True, "voice_id": voice_id}
 
 
 # ── Pydantic models ────────────────────────────────────────────────────────────
@@ -1044,6 +1685,8 @@ def _resolve_actor(line: str, cast: Dict[str, Dict[str, Optional[str]]],
 
 @app.post("/api/tts")
 async def generate_tts(req: TTSRequest):
+    if not _known_voice(req.voice):
+        raise HTTPException(400, "Giọng đọc đã chọn không tồn tại hoặc đã bị xóa")
     expressive_segments = parse_inline_cues(req.text, req.emotion, req.emotion_intensity)
     text = clean_text_for_tts(req.text)
     if not expressive_segments:
@@ -1370,6 +2013,9 @@ def merge_same_voice(segments: List[DramaSegment], max_chars: int = 2500) -> Lis
 async def generate_drama_tts(req: DramaTTSRequest):
     if not req.segments:
         raise HTTPException(400, "Danh sách đoạn kịch bản không được rỗng")
+    missing_voices = sorted({segment.voice for segment in req.segments if not _known_voice(segment.voice)})
+    if missing_voices:
+        raise HTTPException(400, "Một hoặc nhiều giọng đọc không tồn tại hoặc đã bị xóa")
 
     # Smart merge consecutive same-voice lines → fewer API calls
     groups = merge_same_voice(req.segments, max_chars=1400)

@@ -168,7 +168,7 @@ def plan(folder, p, rows, client, update):
         scene['start'] = 0 if index == 0 else result[-1]['end']
         scene['end'] = p['duration'] if index == len(scenes) - 1 else scenes[index + 1][0]['start']
         result.append(scene)
-    manifest = dict(characters=bible['characters'], scenes=result, style=p['style'], width=p['width'], height=p['height'])
+    manifest = dict(characters=bible['characters'], scenes=result, visual_mode=p.get('visual_mode', 'hand_drawn_whiteboard'), style=p['style'], width=p['width'], height=p['height'])
     save(target, manifest)
     return manifest
 

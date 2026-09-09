@@ -30,6 +30,13 @@ async def lifespan(app):
 
 app = FastAPI(title='Story Video Studio', lifespan=lifespan)
 
+VISUAL_MODES = {
+    'hand_drawn_whiteboard',
+    'motion_comic',
+    'cutout_animation',
+    'cinematic_slideshow',
+}
+
 
 def folder(pid):
     if not re.fullmatch('[a-f0-9]{32}', pid) or not (DATA / pid / 'project.json').is_file():
@@ -139,10 +146,10 @@ async def upload(file, destination, limit=1024 * 1024 * 1024):
 
 
 @app.post('/api/projects', status_code=201)
-async def create(title: str = Form(...), story: str = Form(...), audio: UploadFile = File(...), music: UploadFile | None = File(None), alignment: str = Form('whisper'), aspect: str = Form('16:9'), shot_seconds: int = Form(8), style: str = Form('cinematic illustration, consistent character design'), burn_subtitles: bool = Form(True)):
+async def create(title: str = Form(...), story: str = Form(...), audio: UploadFile = File(...), music: UploadFile | None = File(None), alignment: str = Form('whisper'), aspect: str = Form('16:9'), shot_seconds: int = Form(30), visual_mode: str = Form('hand_drawn_whiteboard'), style: str = Form('cinematic illustration, consistent character design'), burn_subtitles: bool = Form(True)):
     if not 30 <= len(story.strip()) <= 500000 or not 1 <= len(title.strip()) <= 200:
         raise HTTPException(422, 'Truyện cần 30–500.000 ký tự; tiêu đề 1–200 ký tự.')
-    if alignment not in ('whisper', 'estimate') or aspect not in ('16:9', '9:16') or not 4 <= shot_seconds <= 30 or len(style) > 2000:
+    if alignment not in ('whisper', 'estimate') or aspect not in ('16:9', '9:16') or visual_mode not in VISUAL_MODES or not 4 <= shot_seconds <= 60 or len(style) > 2000:
         raise HTTPException(422, 'Cấu hình không hợp lệ')
     pid = uuid.uuid4().hex
     target = DATA / pid
@@ -151,7 +158,7 @@ async def create(title: str = Form(...), story: str = Form(...), audio: UploadFi
     has_music = music is not None and bool(music.filename)
     if has_music:
         await upload(music, target / 'music.audio')
-    save(target / 'project.json', {'title': title.strip(), 'story': story.strip(), 'audio': 'narration.audio', 'music': 'music.audio' if has_music else None, 'alignment': alignment, 'width': 1280 if aspect == '16:9' else 720, 'height': 720 if aspect == '16:9' else 1280, 'shot_seconds': shot_seconds, 'style': style, 'burn_subtitles': burn_subtitles})
+    save(target / 'project.json', {'title': title.strip(), 'story': story.strip(), 'audio': 'narration.audio', 'music': 'music.audio' if has_music else None, 'alignment': alignment, 'width': 1280 if aspect == '16:9' else 720, 'height': 720 if aspect == '16:9' else 1280, 'shot_seconds': shot_seconds, 'visual_mode': visual_mode, 'style': style, 'burn_subtitles': burn_subtitles})
     enqueue(pid)
     return {'id': pid}
 
